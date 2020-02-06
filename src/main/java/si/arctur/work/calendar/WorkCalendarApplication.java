@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package si.arctur.simple;
+package si.arctur.work.calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -23,19 +23,15 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import si.arctur.simple.service.HelloWorldService;
+import si.arctur.work.calendar.service.WorkCalendarService;
 
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
-public class SampleSimpleApplication implements CommandLineRunner {
-
-	// Simple example shows how a command line spring application can execute an
-	// injected bean service. Also demonstrates how you can use @Value to inject
-	// command line args ('--name=whatever') or application properties
+public class WorkCalendarApplication implements CommandLineRunner {
 
 	@Autowired
-	private HelloWorldService helloWorldService;
+	private WorkCalendarService helloWorldService;
 
 	@Override
 	public void run(String... args) {
@@ -43,6 +39,6 @@ public class SampleSimpleApplication implements CommandLineRunner {
 	}
 
 	public static void main(String[] args) throws Exception {
-		SpringApplication.run(SampleSimpleApplication.class, args);
+		SpringApplication.run(WorkCalendarApplication.class, args);
 	}
 }
