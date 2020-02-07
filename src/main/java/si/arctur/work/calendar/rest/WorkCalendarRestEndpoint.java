@@ -1,18 +1,31 @@
 package si.arctur.work.calendar.rest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import si.arctur.work.calendar.model.WorkCalendarDTO;
+import si.arctur.work.calendar.model.WorkweekDTO;
+import si.arctur.work.calendar.service.WorkCalendarService;
+import si.arctur.work.calendar.service.WorkweekService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/workcalendar")
 public class WorkCalendarRestEndpoint {
 
-    @GetMapping(path = "/")
-    public void getAllCalendars() {
+    @Autowired
+    private WorkCalendarService workCalendarService;
 
+    @Autowired
+    private WorkweekService workweekService;
+
+    @GetMapping
+    public List<WorkCalendarDTO> getAllCalendars(@RequestParam(value = "year", required = false) Integer year, @RequestParam(value = "name", required = false) String name) {
+        return workCalendarService.getWorkCalendars();
     }
 
     @GetMapping(path = "/{id}")
-    public void getCalendarById(@PathVariable("id") Long id) {
+    public void getCalendar(@PathVariable("id") Long id) {
 
     }
 
@@ -44,8 +57,8 @@ public class WorkCalendarRestEndpoint {
 
     //workweek rest endpoints
     @GetMapping(path = "/{calendarId}/workweek")
-    public void getWorkweeksForCalendar(@PathVariable("calendarId") Long calendarId) {
-
+    public List<WorkweekDTO> getWorkweeksForCalendar(@PathVariable("calendarId") Long calendarId, @RequestParam(value = "weekNumber", required = false) Integer weekNumber, @RequestParam(value = "description", required = false) String description) {
+        return workweekService.getWorkweeksByCalendarId(calendarId);
     }
 
     @GetMapping(path = "/{calendarId}/workweek/{workweekId}")

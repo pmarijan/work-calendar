@@ -20,23 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import si.arctur.work.calendar.service.WorkCalendarService;
 
+@SpringBootApplication
 @Configuration
-@EnableAutoConfiguration
-@ComponentScan
-public class WorkCalendarApplication implements CommandLineRunner {
-
-	@Autowired
-	private WorkCalendarService helloWorldService;
-
-	@Override
-	public void run(String... args) {
-		System.out.println(this.helloWorldService.getHelloMessage());
-	}
+public class WorkCalendarApplication {
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(WorkCalendarApplication.class, args);

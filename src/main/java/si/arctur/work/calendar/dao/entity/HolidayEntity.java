@@ -1,4 +1,4 @@
-package si.arctur.work.calendar.dao;
+package si.arctur.work.calendar.dao.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;

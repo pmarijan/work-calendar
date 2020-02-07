@@ -1,6 +1,9 @@
-package si.arctur.work.calendar.dao;
+package si.arctur.work.calendar.dao.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "work_calendar")
@@ -21,6 +24,15 @@ public class WorkCalendarEntity {
 
     @Column(name = "year", nullable = false, unique = false)
     private Integer year;
+
+    @OneToMany(mappedBy="workCalendar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<WorkweekEntity> workweekSet;
+
+    public WorkCalendarEntity() {}
+
+    public WorkCalendarEntity(long id) {
+        this.id = id;
+    }
 
     public long getId() {
         return id;
@@ -60,5 +72,16 @@ public class WorkCalendarEntity {
 
     public void setYear(Integer year) {
         this.year = year;
+    }
+
+    public Set<WorkweekEntity> getWorkweekSet() {
+        if(Objects.isNull(this.workweekSet)) {
+            this.workweekSet = new HashSet<>();
+        }
+        return workweekSet;
+    }
+
+    public void setWorkweekSet(Set<WorkweekEntity> workweekSet) {
+        this.workweekSet = workweekSet;
     }
 }

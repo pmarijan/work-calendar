@@ -1,9 +1,9 @@
-package si.arctur.work.calendar.dao;
+package si.arctur.work.calendar.dao.entity;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "workday")
+@Table(name = "workweek")
 public class WorkweekEntity {
 
     @Id
@@ -15,6 +15,17 @@ public class WorkweekEntity {
 
     @Column(name = "week_number", nullable = false, unique = false)
     private Integer weekNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "work_calendar_id", nullable = false)
+    private WorkCalendarEntity workCalendar;
+
+    public WorkweekEntity(long id) {
+        this.id = id;
+    }
+
+    public WorkweekEntity() {
+    }
 
     public long getId() {
         return id;
@@ -38,5 +49,13 @@ public class WorkweekEntity {
 
     public void setWeekNumber(Integer weekNumber) {
         this.weekNumber = weekNumber;
+    }
+
+    public WorkCalendarEntity getWorkCalendar() {
+        return workCalendar;
+    }
+
+    public void setWorkCalendar(WorkCalendarEntity workCalendar) {
+        this.workCalendar = workCalendar;
     }
 }
