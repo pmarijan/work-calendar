@@ -9,12 +9,12 @@ import java.util.Collection;
 
 public interface HolidayRepository extends JpaRepository<HolidayEntity, Long> {
 
-    HolidayEntity getHolidayEntityById(@Param("id") Long id);
+    HolidayEntity getHolidayEntityById(long id);
 
-    Collection<HolidayEntity> getHolidayEntitiesByDateOrNameOrWorkFree(@Param("date") LocalDate date, @Param("name") String name, @Param("workFree") Boolean workFree);
+//    Collection<HolidayEntity> getHolidayEntitiesByDateOrNameOrWorkFree(@Param("date") LocalDate date, @Param("name") String name, @Param("workFree") Boolean workFree);
 
 //    @Query("SELECT h FROM HolidayEntity h WHERE h.workCalendars.id = :calendarId")
-    Collection<HolidayEntity> getHolidayEntitiesByWorkCalendars(@Param("calendarId") WorkCalendarEntity workCalendarEntity);
+    Collection<HolidayEntity> getHolidayEntitiesByWorkCalendars(WorkCalendarEntity workCalendarEntity);
 
 //    public Collection<HolidayEntity> findByWorkCalendars_id
 }

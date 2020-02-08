@@ -7,20 +7,21 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "holiday")
+@Table(name = "holiday", uniqueConstraints=
+    @UniqueConstraint(columnNames={"name", "date"}))
 public class HolidayEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "date", nullable = false, unique = true)
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "work_free", nullable = false, unique = false)
+    @Column(name = "work_free", nullable = false)
     private Boolean workFree;
 
     @ManyToMany(mappedBy = "holidays")

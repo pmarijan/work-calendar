@@ -42,7 +42,7 @@ public class WorkweekService {
     public List<WorkweekDTO> getWorkweeksByCalendarId(Long calendarId) {
         LOG.info("START - getWorkweeksByCalendarId(calendarId={})", calendarId);
 
-        return workweekRepository.getWorkweekEntitiesByWorkCalendar(calendarId).stream().map(workWeek -> workweekConverter.convert(workWeek)).collect(Collectors.toList());
+        return workweekRepository.getWorkweekEntitiesByWorkCalendar(new WorkCalendarEntity(calendarId)).stream().map(workWeek -> workweekConverter.convert(workWeek)).collect(Collectors.toList());
     }
 
     public WorkweekDTO addWorkweek(WorkweekDTO workweekDTO) {

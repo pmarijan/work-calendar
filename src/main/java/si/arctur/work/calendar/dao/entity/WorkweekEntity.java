@@ -3,17 +3,18 @@ package si.arctur.work.calendar.dao.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "workweek")
+@Table(name = "workweek", uniqueConstraints=
+    @UniqueConstraint(columnNames={"week_number", "work_calendar_id"}))
 public class WorkweekEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "description", nullable = false, unique = true)
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "week_number", nullable = false, unique = false)
+    @Column(name = "week_number", nullable = false)
     private Integer weekNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

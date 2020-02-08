@@ -6,23 +6,24 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "work_calendar")
+@Table(name = "work_calendar", uniqueConstraints=
+    @UniqueConstraint(columnNames={"name", "year"}))
 public class WorkCalendarEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "description", nullable = true, unique = true)
+    @Column(name = "description", nullable = true)
     private String description;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "workdays", nullable = true, unique = false)
+    @Column(name = "workdays", nullable = true)
     private String workdays;
 
-    @Column(name = "year", nullable = false, unique = false)
+    @Column(name = "year", nullable = false)
     private Integer year;
 
     @OneToMany(mappedBy="workCalendar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
