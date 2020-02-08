@@ -1,6 +1,7 @@
 package si.arctur.work.calendar.dao.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import si.arctur.work.calendar.dao.entity.HolidayEntity;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
@@ -16,5 +17,6 @@ public interface HolidayRepository extends JpaRepository<HolidayEntity, Long> {
 //    @Query("SELECT h FROM HolidayEntity h WHERE h.workCalendars.id = :calendarId")
     Collection<HolidayEntity> getHolidayEntitiesByWorkCalendars(WorkCalendarEntity workCalendarEntity);
 
-//    public Collection<HolidayEntity> findByWorkCalendars_id
+    @Query("SELECT h FROM HolidayEntity h WHERE YEAR(h.date) = :year ")
+    Collection<HolidayEntity> getHolidayEntitiesByYear(@Param("year") Integer year);
 }

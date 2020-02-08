@@ -10,6 +10,9 @@ import si.arctur.work.calendar.model.WorkweekDTO;
 import si.arctur.work.calendar.service.HolidayService;
 import si.arctur.work.calendar.service.WorkCalendarService;
 import si.arctur.work.calendar.service.WorkweekService;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -37,6 +40,14 @@ public class WorkCalendarRestEndpoint {
         LOG.info("START - getCalendar(id={})", id);
 
         return workCalendarService.getWorkCalendar(id);
+    }
+
+    @GetMapping(path = "/day")
+    public List<String> getListOfDays(@PathVariable("id") Long id, @RequestParam(value = "from") LocalDate from, @RequestParam(value = "to") LocalDate to) {
+        LOG.info("START - getListOfDays(id={}, from={}, to={})", id, from, to);
+
+        //TODO:
+        return new ArrayList<>();
     }
 
     //holiday rest endpoints
