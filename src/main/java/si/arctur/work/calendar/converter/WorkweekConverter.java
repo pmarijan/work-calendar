@@ -14,7 +14,7 @@ public class WorkweekConverter implements Converter<WorkweekEntity, WorkweekDTO>
         workweekDTO.setId(workweekEntity.getId());
         workweekDTO.setWeekNumber(workweekEntity.getWeekNumber());
 //        workweekDTO.setWorkCalendar(workweekEntity.getWorkCalendar());
-
+        //TODO: add work calendars
         return workweekDTO;
     }
 }

@@ -1,4 +1,4 @@
-package si.arctur.work.calendar.rest;
+package si.arctur.work.calendar.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +39,10 @@ public class WorkweekRestEndpoint {
     public WorkweekDTO updateWorkweek(@PathVariable("id") Long id, @RequestBody WorkweekDTO workweekDTO) {
         LOG.info("START - updateWorkweek(id={}, workweekDTO={})", id, workweekDTO);
 
-        //we must ensure that id is correct, we don't wan't to update wrong week
-        workweekDTO.setId(id);
+        //check if ids match
+        if(id != workweekDTO.getId()) {
+            //TODO: throw exception
+        }
 
         return workweekService.updateWorkweek(workweekDTO);
     }

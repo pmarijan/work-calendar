@@ -3,12 +3,14 @@ package si.arctur.work.calendar.dao.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
 
 import java.util.Collection;
 
-public interface CalendarRepository extends CrudRepository<WorkCalendarEntity, Long> {
+public interface CalendarRepository extends JpaRepository<WorkCalendarEntity, Long> {
 
-    @Query(value = "SELECT wc FROM WorkCalendarEntity wc")
-    Collection<WorkCalendarEntity> getAllWorkCalendars();
+    WorkCalendarEntity getWorkCalendarEntityById(@Param("id") long id);
+
+//    Collection<WorkCalendarEntity> getWorkCalendarEntitiesByDescriptionOrNameOrWorkdaysOrYear(@Param("description") String description, @Param("name") String name, @Param("workDays") String workDays, @Param("year") Integer year);
 }

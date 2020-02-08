@@ -1,37 +1,16 @@
-package si.arctur.work.calendar.dao.entity;
+package si.arctur.work.calendar.model;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Table(name = "holiday")
-public class HolidayEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class HolidayDTO {
     private long id;
-
-    @Column(name = "name", nullable = false, unique = true)
     private String name;
-
-    @Column(name = "date", nullable = false, unique = true)
     private LocalDate date;
-
-    @Column(name = "work_free", nullable = false, unique = false)
     private Boolean workFree;
-
-    @ManyToMany(mappedBy = "holidays")
-    private Set<WorkCalendarEntity> workCalendars;
-
-    public HolidayEntity() {
-    }
-
-    public HolidayEntity(long id) {
-        this.id = id;
-    }
+    private Set<WorkCalendarDTO> workCalendars;
 
     public long getId() {
         return id;
@@ -65,14 +44,14 @@ public class HolidayEntity {
         this.workFree = workFree;
     }
 
-    public Set<WorkCalendarEntity> getWorkCalendars() {
-        if(Objects.isNull(this.workCalendars)) {
-            this.workCalendars = new HashSet<>();
+    public Set<WorkCalendarDTO> getWorkCalendars() {
+        if(Objects.isNull(workCalendars)) {
+            workCalendars = new HashSet<>();
         }
         return workCalendars;
     }
 
-    public void setWorkCalendars(Set<WorkCalendarEntity> workCalendars) {
+    public void setWorkCalendars(Set<WorkCalendarDTO> workCalendars) {
         this.workCalendars = workCalendars;
     }
 }

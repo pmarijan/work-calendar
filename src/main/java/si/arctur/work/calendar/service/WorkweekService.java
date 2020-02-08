@@ -3,6 +3,7 @@ package si.arctur.work.calendar.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 import si.arctur.work.calendar.converter.WorkweekConverter;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
@@ -25,7 +26,11 @@ public class WorkweekService {
     public List<WorkweekDTO> getWorkweeks(String description, Integer weekNumber) {
         LOG.info("START - getWorkWeeks(description={}, weekNumber={})", description, weekNumber);
 
-        return workweekRepository.getWorkweekEntitiesByDescriptionOrWeekNumber(description, weekNumber).stream().map(workWeek -> workweekConverter.convert(workWeek)).collect(Collectors.toList());
+        WorkweekEntity workweekEntity = new WorkweekEntity();
+        workweekEntity.setDescription(description);
+        workweekEntity.setWeekNumber(weekNumber);
+
+        return workweekRepository.findAll(Example.of(workweekEntity)).stream().map(workWeek -> workweekConverter.convert(workWeek)).collect(Collectors.toList());
     }
 
     public WorkweekDTO getWorkweek(Long workweekId) {

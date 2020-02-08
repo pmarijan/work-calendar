@@ -1,17 +1,21 @@
-package si.arctur.work.calendar.rest;
+package si.arctur.work.calendar.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import si.arctur.work.calendar.model.HolidayDTO;
 import si.arctur.work.calendar.model.WorkCalendarDTO;
 import si.arctur.work.calendar.model.WorkweekDTO;
+import si.arctur.work.calendar.service.HolidayService;
 import si.arctur.work.calendar.service.WorkCalendarService;
 import si.arctur.work.calendar.service.WorkweekService;
-
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/workcalendar")
 public class WorkCalendarRestEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(WorkCalendarRestEndpoint.class);
 
     @Autowired
     private WorkCalendarService workCalendarService;
@@ -19,30 +23,38 @@ public class WorkCalendarRestEndpoint {
     @Autowired
     private WorkweekService workweekService;
 
+    @Autowired
+    private HolidayService holidayService;
+
     @GetMapping
-    public List<WorkCalendarDTO> getAllCalendars(@RequestParam(value = "year", required = false) Integer year, @RequestParam(value = "name", required = false) String name) {
-        return workCalendarService.getWorkCalendars();
+    public List<WorkCalendarDTO> getWorkCalendars(@RequestParam(value = "description", required = false) String description, @RequestParam(value = "year", required = false) Integer year, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "workDays", required = false) String workDays) {
+        LOG.info("START - getWorkCalendars(description={}, year={}, name={}, workDays={})", description, year, name, workDays);
+        return workCalendarService.getWorkCalendars(description, name, workDays, year);
     }
 
     @GetMapping(path = "/{id}")
-    public void getCalendar(@PathVariable("id") Long id) {
+    public WorkCalendarDTO getCalendar(@PathVariable("id") Long id) {
+        LOG.info("START - getCalendar(id={})", id);
 
+        return workCalendarService.getWorkCalendar(id);
     }
 
     //holiday rest endpoints
     @GetMapping(path = "/{calendarId}/holiday")
-    public void getHolidaysForCalendar(@PathVariable("calendarId") Long calendarId) {
+    public List<HolidayDTO> getHolidaysForCalendar(@PathVariable("calendarId") Long calendarId) {
+        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
 
+        return holidayService.getHolidaysForCalendar(calendarId);
     }
 
     @GetMapping(path = "/{calendarId}/holiday/{holidayId}")
     public void getHolidayForCalendar(@PathVariable("calendarId") Long calendarId, @PathVariable("holidayId") Long holidayId) {
-
+        LOG.info("START - getHolidayForCalendar(calendarId={}, holidayId)", calendarId, holidayId);
     }
 
     @DeleteMapping(path = "/{calendarId}/holiday/{holidayId}")
     public void deleteHolidayForCalendar(@PathVariable("calendarId") Long calendarId, @PathVariable("holidayId") Long holidayId) {
-
+        LOG.info("START - deleteHolidayForCalendar(calendarId={}, holidayId)", calendarId, holidayId);
     }
 
     @PostMapping(path = "/{calendarId}/holiday/")

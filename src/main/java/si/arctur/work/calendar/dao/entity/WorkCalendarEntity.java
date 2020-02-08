@@ -11,7 +11,7 @@ public class WorkCalendarEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(name = "description", nullable = true, unique = true)
     private String description;
@@ -28,13 +28,18 @@ public class WorkCalendarEntity {
     @OneToMany(mappedBy="workCalendar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<WorkweekEntity> workweekSet;
 
+    @ManyToMany
+    @JoinTable(name = "work_calendar2holiday",
+                joinColumns = @JoinColumn(name = "work_calendar_id"), inverseJoinColumns = @JoinColumn(name = "holiday_id"))
+    private Set<HolidayEntity> holidays;
+
     public WorkCalendarEntity() {}
 
-    public WorkCalendarEntity(long id) {
+    public WorkCalendarEntity(Long id) {
         this.id = id;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
