@@ -54,6 +54,36 @@ public class WorkCalendarService {
 		return workCalendarConverter.convert(calendarRepository.getWorkCalendarEntityById(id));
 	}
 
+	public long getWorkdayCount(LocalDate from, LocalDate to) {
+        LOG.info("START - getWorkdayCount(from={}, to={})", from, to);
+
+        //get collection of holidays for year from provided date range
+        Collection<HolidayEntity> holidays = holidayRepository.getHolidayEntitiesByYear(from.getYear());
+
+        //convert collection to map for easier date search
+        Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(h -> h.getDate(), h -> h));
+
+        //function check if date is weekend or holiday
+        Function<LocalDate, Boolean> isWorkday = (LocalDate date) -> {
+            Boolean result = false;
+
+            if(!date.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !date.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+                if(holidaysMap.containsKey(date)) {
+                    if (!holidaysMap.get(date).getWorkFree()) {
+                        result = true;
+                    }
+                } else {
+                    result = true;
+                }
+            }
+
+            return result;
+        };
+
+        long numOfWorkingDays = getDatesRange(from, to).stream().filter(l -> isWorkday.apply(l)).count();
+        return numOfWorkingDays;
+    }
+
 	public List<DayDTO> getListOfDays(LocalDate from, LocalDate to) {
 		LOG.info("START - getListOfDays(from={}, to={})", from, to);
 
