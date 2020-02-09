@@ -2,9 +2,7 @@ package si.arctur.work.calendar.dao.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "holiday", uniqueConstraints=
@@ -12,8 +10,8 @@ import java.util.Set;
 public class HolidayEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -25,20 +23,20 @@ public class HolidayEntity {
     private Boolean workFree;
 
     @ManyToMany(mappedBy = "holidays")
-    private Set<WorkCalendarEntity> workCalendars;
+    private List<WorkCalendarEntity> workCalendars;
 
     public HolidayEntity() {
     }
 
-    public HolidayEntity(long id) {
+    public HolidayEntity(Long id) {
         this.id = id;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,14 +64,14 @@ public class HolidayEntity {
         this.workFree = workFree;
     }
 
-    public Set<WorkCalendarEntity> getWorkCalendars() {
+    public List<WorkCalendarEntity> getWorkCalendars() {
         if(Objects.isNull(this.workCalendars)) {
-            this.workCalendars = new HashSet<>();
+            this.workCalendars = new ArrayList<>();
         }
         return workCalendars;
     }
 
-    public void setWorkCalendars(Set<WorkCalendarEntity> workCalendars) {
+    public void setWorkCalendars(List<WorkCalendarEntity> workCalendars) {
         this.workCalendars = workCalendars;
     }
 }

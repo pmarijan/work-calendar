@@ -13,6 +13,8 @@ import si.arctur.work.calendar.dao.entity.HolidayEntity;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
 import si.arctur.work.calendar.dao.repository.HolidayRepository;
 import si.arctur.work.calendar.model.HolidayDTO;
+import si.arctur.work.calendar.model.WorkCalendarDTO;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -31,7 +33,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHolidays_getOne() {
-        Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(generateHolidayDTOList(1));
+        Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(generateHolidayEntityList(1));
 
         List<HolidayDTO> holidays = holidayService.getHolidays(LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
@@ -41,7 +43,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHolidays_getTwo() {
-        Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(generateHolidayDTOList(2));
+        Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(generateHolidayEntityList(2));
 
         List<HolidayDTO> holidays = holidayService.getHolidays(LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
@@ -59,23 +61,94 @@ public class HolidayServiceTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetHolidaysForCalendar_getException() {
+    public void testGetHolidaysForCalendar_getExceptionForNullInput() {
         holidayService.getHolidaysForCalendar(null);
 
         Assert.fail("Exception should be thrown!");
     }
 
+    @Test
+    public void testGetHolidaysForCalendar_getCollection() {
+        Mockito.when(holidayRepository.getHolidayEntitiesByWorkCalendars(Mockito.any(WorkCalendarEntity.class))).thenReturn(generateHolidayEntityList(5));
+
+        List<HolidayDTO> holidays = holidayService.getHolidaysForCalendar(Long.valueOf(1));
+
+        Assert.assertNotNull(holidays);
+        Assert.assertFalse(holidays.isEmpty());
+        Assert.assertTrue(holidays.size() == 5);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetHoliday_getExceptionForNullInput() {
+        holidayService.getHoliday(null);
+
+        Assert.fail("Exception should be thrown!");
+    }
+
+    @Test
+    public void testGetHoliday_getOne() {
+        Mockito.when(holidayRepository.getHolidayEntityById(Long.valueOf(1))).thenReturn(generateHolidayEntity(Long.valueOf(1)));
+
+        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1));
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(Long.valueOf(1), result.getId());
+    }
+
+    @Test
+    public void testGetHoliday_getNull() {
+        Mockito.when(holidayRepository.getHolidayEntityById(Long.valueOf(1))).thenReturn(null);
+
+        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1));
+
+        Assert.assertNull(result);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddHoliday_getExceptionForNullInput() {
+        holidayService.addHoliday(null);
+
+        Assert.fail("Exception should be thrown!");
+    }
+
+    @Test
+    public void testAddHoliday_getOne() {
+        Mockito.when(holidayRepository.save(Mockito.any(HolidayEntity.class))).thenReturn(generateHolidayEntity(Long.valueOf(1)));
+
+        HolidayDTO holidayDTO = holidayService.addHoliday(generateHolidayDTO(null));
+
+        Assert.assertNotNull(holidayDTO);
+        Assert.assertEquals(Long.valueOf(1), holidayDTO.getId());
+        Assert.assertFalse(holidayDTO.getWorkCalendars().isEmpty());
+    }
+
     //methods for generating test data
-    private List<HolidayEntity> generateHolidayDTOList(int numberOfHolidays) {
+    private HolidayDTO generateHolidayDTO(Long id) {
+        HolidayDTO holidayDTO = new HolidayDTO();
+        holidayDTO.setId(id);
+        holidayDTO.setDate(LocalDate.of(2020, 1, 1));
+        holidayDTO.setName("test holiday dto object " + id);
+        holidayDTO.setWorkFree(true);
+        holidayDTO.getWorkCalendars().add(generateWorkCalendarDTO());
+        return holidayDTO;
+    }
+
+    private WorkCalendarDTO generateWorkCalendarDTO() {
+        WorkCalendarDTO workCalendarDTO = new WorkCalendarDTO();
+        workCalendarDTO.setId(Long.valueOf(1));
+        workCalendarDTO.setYear(2020);
+        workCalendarDTO.setName("Test Calendar 1");
+        workCalendarDTO.setDescription("Test working calendar 1 for year 2020");
+        workCalendarDTO.setWorkdays(new StringJoiner(",").add(DayOfWeek.MONDAY.name()).add(DayOfWeek.TUESDAY.name()).add(DayOfWeek.WEDNESDAY.name()).toString());
+
+        return workCalendarDTO;
+    }
+
+    private List<HolidayEntity> generateHolidayEntityList(int numberOfHolidays) {
         List<HolidayEntity> list = new ArrayList<>();
 
         for(int i = 1; i <= numberOfHolidays; i++) {
-            HolidayEntity holidayEntity = new HolidayEntity();
-            holidayEntity.setId(i);
-            holidayEntity.setWorkFree(true);
-            holidayEntity.setName("Test holiday " + i);
-            holidayEntity.setDate(LocalDate.of(2020, 2, 8));
-            holidayEntity.setWorkCalendars(Stream.of(generateWorkCalendarEntity()).collect(Collectors.toCollection(HashSet::new)));
+            HolidayEntity holidayEntity = generateHolidayEntity(Long.valueOf(i));
 
             list.add(holidayEntity);
         }
@@ -83,9 +156,20 @@ public class HolidayServiceTest {
         return list;
     }
 
+    private HolidayEntity generateHolidayEntity(Long id) {
+        HolidayEntity holidayEntity = new HolidayEntity();
+        holidayEntity.setId(id);
+        holidayEntity.setWorkFree(true);
+        holidayEntity.setName("Test holiday " + id);
+        holidayEntity.setDate(LocalDate.of(2020, 2, 8));
+        holidayEntity.getWorkCalendars().add(generateWorkCalendarEntity());//setWorkCalendars(Stream.of(generateWorkCalendarEntity()).collect(Collectors.toCollection(HashSet::new)));
+
+        return holidayEntity;
+    }
+
     private WorkCalendarEntity generateWorkCalendarEntity() {
         WorkCalendarEntity workCalendarEntity = new WorkCalendarEntity();
-        workCalendarEntity.setId(1);
+        workCalendarEntity.setId(Long.valueOf(1));
         workCalendarEntity.setDescription("Test work calendar");
         workCalendarEntity.setName("Calendar 1");
         workCalendarEntity.setYear(2020);

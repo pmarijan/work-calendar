@@ -25,7 +25,7 @@ public class WorkweekRepositoryTest {
         WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityById(Long.valueOf(2));
 
         Assert.assertNotNull(workweekEntity);
-        Assert.assertEquals(2, workweekEntity.getId());
+        Assert.assertEquals(Long.valueOf(2), workweekEntity.getId());
         Assert.assertEquals(Integer.valueOf(2), workweekEntity.getWeekNumber());
         Assert.assertEquals("Work week 2", workweekEntity.getDescription());
         Assert.assertEquals(Long.valueOf(1), workweekEntity.getWorkCalendar().getId());

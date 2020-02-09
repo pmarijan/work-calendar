@@ -4,7 +4,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class WorkCalendarDTO {
-    private long id;
+    private Long id;
     private String description;
     @NotNull
     private String name;
@@ -13,11 +13,11 @@ public class WorkCalendarDTO {
     @Min(0)
     private Integer year;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

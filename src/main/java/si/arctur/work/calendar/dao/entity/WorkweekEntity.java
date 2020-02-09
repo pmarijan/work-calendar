@@ -9,7 +9,7 @@ public class WorkweekEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -21,18 +21,18 @@ public class WorkweekEntity {
     @JoinColumn(name = "work_calendar_id", nullable = false)
     private WorkCalendarEntity workCalendar;
 
-    public WorkweekEntity(long id) {
+    public WorkweekEntity(Long id) {
         this.id = id;
     }
 
     public WorkweekEntity() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
