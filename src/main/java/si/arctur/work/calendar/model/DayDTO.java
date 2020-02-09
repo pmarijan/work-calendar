@@ -30,4 +30,13 @@ public class DayDTO {
     public void setWeekend(Boolean weekend) {
         isWeekend = weekend;
     }
+
+    @Override
+    public String toString() {
+        return "DayDTO{" +
+                "date=" + date +
+                ", holiday=" + holiday +
+                ", isWeekend=" + isWeekend +
+                '}';
+    }
 }

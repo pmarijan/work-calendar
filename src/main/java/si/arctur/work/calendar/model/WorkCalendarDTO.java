@@ -1,10 +1,16 @@
 package si.arctur.work.calendar.model;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class WorkCalendarDTO {
     private long id;
     private String description;
+    @NotNull
     private String name;
     private String workdays;
+    @NotNull
+    @Min(0)
     private Integer year;
 
     public long getId() {
@@ -45,5 +51,16 @@ public class WorkCalendarDTO {
 
     public void setYear(Integer year) {
         this.year = year;
+    }
+
+    @Override
+    public String toString() {
+        return "WorkCalendarDTO{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", name='" + name + '\'' +
+                ", workdays='" + workdays + '\'' +
+                ", year=" + year +
+                '}';
     }
 }

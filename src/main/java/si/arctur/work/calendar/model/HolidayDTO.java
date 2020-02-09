@@ -1,5 +1,6 @@
 package si.arctur.work.calendar.model;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -7,8 +8,11 @@ import java.util.Set;
 
 public class HolidayDTO {
     private long id;
+    @NotNull
     private String name;
+    @NotNull
     private LocalDate date;
+    @NotNull
     private Boolean workFree;
     private Set<WorkCalendarDTO> workCalendars;
 
@@ -53,5 +57,16 @@ public class HolidayDTO {
 
     public void setWorkCalendars(Set<WorkCalendarDTO> workCalendars) {
         this.workCalendars = workCalendars;
+    }
+
+    @Override
+    public String toString() {
+        return "HolidayDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", workFree=" + workFree +
+                ", workCalendars=" + workCalendars +
+                '}';
     }
 }

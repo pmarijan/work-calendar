@@ -1,9 +1,18 @@
 package si.arctur.work.calendar.model;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class WorkweekDTO {
     private long id;
+    @NotNull
     private String description;
+    @NotNull
+    @Min(1)
+    @Max(54)
     private Integer weekNumber;
+
     private WorkCalendarDTO workCalendar;
 
     public long getId() {
