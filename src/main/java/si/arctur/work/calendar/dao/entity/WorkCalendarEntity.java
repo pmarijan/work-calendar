@@ -1,6 +1,10 @@
 package si.arctur.work.calendar.dao.entity;
 
+import si.arctur.work.calendar.dao.EnumSetToStringConverter;
+
 import javax.persistence.*;
+import java.time.DayOfWeek;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,8 +24,9 @@ public class WorkCalendarEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "workdays", nullable = true)
-    private String workdays;
+    @Column(name = "workdays")
+    @Convert(converter = EnumSetToStringConverter.class)
+    private Set<DayOfWeek> workdays;
 
     @Column(name = "year", nullable = false)
     private Integer year;
@@ -64,11 +69,14 @@ public class WorkCalendarEntity {
         this.name = name;
     }
 
-    public String getWorkdays() {
+    public Set<DayOfWeek> getWorkdays() {
+        if(Objects.isNull(this.workdays)) {
+            this.workdays = EnumSet.noneOf(DayOfWeek.class);
+        }
         return workdays;
     }
 
-    public void setWorkdays(String workdays) {
+    public void setWorkdays(EnumSet<DayOfWeek> workdays) {
         this.workdays = workdays;
     }
 
@@ -89,5 +97,13 @@ public class WorkCalendarEntity {
 
     public void setWorkweekSet(Set<WorkweekEntity> workweekSet) {
         this.workweekSet = workweekSet;
+    }
+
+    public Set<HolidayEntity> getHolidays() {
+        return holidays;
+    }
+
+    public void setHolidays(Set<HolidayEntity> holidays) {
+        this.holidays = holidays;
     }
 }

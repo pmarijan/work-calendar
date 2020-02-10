@@ -139,7 +139,7 @@ public class HolidayServiceTest {
         workCalendarDTO.setYear(2020);
         workCalendarDTO.setName("Test Calendar 1");
         workCalendarDTO.setDescription("Test working calendar 1 for year 2020");
-        workCalendarDTO.setWorkdays(new StringJoiner(",").add(DayOfWeek.MONDAY.name()).add(DayOfWeek.TUESDAY.name()).add(DayOfWeek.WEDNESDAY.name()).toString());
+        workCalendarDTO.setWorkdays(EnumSet.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY));
 
         return workCalendarDTO;
     }
@@ -173,7 +173,7 @@ public class HolidayServiceTest {
         workCalendarEntity.setDescription("Test work calendar");
         workCalendarEntity.setName("Calendar 1");
         workCalendarEntity.setYear(2020);
-        workCalendarEntity.setWorkdays(new StringJoiner(",").add(DayOfWeek.MONDAY.name()).add(DayOfWeek.TUESDAY.name()).toString());
+        workCalendarEntity.setWorkdays(EnumSet.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY));
 
         return workCalendarEntity;
     }

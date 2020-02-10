@@ -10,8 +10,13 @@ import org.springframework.util.Assert;
 import si.arctur.work.calendar.converter.HolidayConverter;
 import si.arctur.work.calendar.dao.entity.HolidayEntity;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
+import si.arctur.work.calendar.dao.repository.CalendarRepository;
 import si.arctur.work.calendar.dao.repository.HolidayRepository;
+import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.HolidayDTO;
+import si.arctur.work.calendar.model.WorkCalendarDTO;
+
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +28,9 @@ public class HolidayService {
 
     @Autowired
     private HolidayRepository holidayRepository;
+
+    @Autowired
+    private CalendarRepository calendarRepository;
 
     @Autowired
     private HolidayConverter holidayConverter;
@@ -64,6 +72,34 @@ public class HolidayService {
         return holidayConverter.convert(holidayRepository.getHolidayEntityById(id));
     }
 
+    public HolidayDTO addHolidayToCalendar(Long calendarId, HolidayDTO holidayDTO) {
+        LOG.info("START - addHoliday(calendarId={}, holidayDTO={})", calendarId, holidayDTO);
+
+        //check if calendar exists
+        WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(calendarId);
+        if(Objects.isNull(workCalendarEntity)) {
+            LOG.error("workcalendar object with id={} does not exist!", calendarId);
+            throw new ResourceNotFoundException("workcalendar object does not exist!");
+        }
+
+        //check if holiday for selected date and name exists
+        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByDateAndName(holidayDTO.getDate(), holidayDTO.getName());
+
+        //if doesn't exist create new one
+        if(Objects.isNull(holidayEntity)) {
+            holidayEntity = new HolidayEntity();
+            holidayEntity.setDate(holidayDTO.getDate());
+            holidayEntity.setName(holidayDTO.getName());
+            holidayEntity.setWorkFree(holidayDTO.getWorkFree());
+            holidayRepository.save(holidayEntity);
+        }
+
+        workCalendarEntity.getHolidays().add(holidayEntity);
+        calendarRepository.save(workCalendarEntity);
+
+        return holidayConverter.convert(holidayEntity);
+    }
+
     /**
      * Add new holiday without adding reference to work calendar
      * @param holidayDTO
@@ -82,11 +118,6 @@ public class HolidayService {
         holidayEntity.setName(holidayDTO.getName());
         holidayEntity.setWorkFree(holidayDTO.getWorkFree());
 
-        //add holiday to all selected calendars
-//        holidayEntity.getWorkCalendars().addAll(holidayDTO.getWorkCalendars().stream()
-//                .map(workCalendarDTO -> new WorkCalendarEntity(workCalendarDTO.getId()))
-//                .collect(Collectors.toList()));
-
         return holidayConverter.convert(holidayRepository.save(holidayEntity));
     }
 
@@ -102,7 +133,6 @@ public class HolidayService {
             LOG.error("HolidayDTO attribute must not be null!");
             throw new IllegalArgumentException("HolidayDTO attribute must not be null!");
         }
-//        Assert.notNull(holidayDTO, "HolidayDTO object must not be null!");
 
         HolidayEntity holidayEntity = holidayRepository.getHolidayEntityById(holidayDTO.getId());
 
@@ -110,13 +140,39 @@ public class HolidayService {
         holidayEntity.setName(holidayDTO.getName());
         holidayEntity.setDate(holidayDTO.getDate());
 
-//        holidayEntity.setWorkCalendars(holidayDTO.getWorkCalendars().stream()
-//                .map(workCalendarDTO -> new WorkCalendarEntity(workCalendarDTO.getId()))
-//                .collect(Collectors.toList()));
-
         return holidayConverter.convert(holidayRepository.save(holidayEntity));
     }
 
+    /**
+     * Check if provided calendarId matches with one from DB
+     * @param calendarId
+     * @param holidayId
+     */
+    @Transactional
+    public void deleteHoliday(Long calendarId, Long holidayId) {
+        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityById(holidayId);
+        int numOfCalendarReferences = holidayEntity.getWorkCalendars().size();
+        LOG.info("numOfCalendarReferences={}", numOfCalendarReferences);
+
+        holidayEntity.getWorkCalendars().stream()
+                .filter(c -> c.getId().equals(calendarId))
+                .findAny()
+                .orElseThrow(() -> {throw new IllegalArgumentException("Workcalendar id mismatch!");});
+
+        //delete mapping if exists
+        holidayRepository.deleteHolidayToWorkCalendarMapping(calendarId, holidayId);
+
+        //if there is no more references to work calendar, delete holiday
+        if(numOfCalendarReferences == 1) {
+            deleteHoliday(holidayId);
+        }
+    }
+
+    /**
+     * Delete holiday record only if it does not have mapping to work calendar
+     * @param id
+     */
+    @Transactional
     public void deleteHoliday(Long id) {
         LOG.info("START - deleteHoliday(id={})", id);
 

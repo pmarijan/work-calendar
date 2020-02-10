@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.WorkweekDTO;
@@ -50,25 +51,29 @@ public class WorkweekRestEndpoint {
         return result;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public WorkweekDTO addWorkweek(@Valid @NotNull@RequestBody WorkweekDTO workweekDTO) {
         LOG.info("START - addWorkweek(workweekDTO={})", workweekDTO);
         return workweekService.addWorkweek(workweekDTO);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public WorkweekDTO updateWorkweek(@PathVariable("id") Long id, @Valid @NotNull @RequestBody WorkweekDTO workweekDTO) {
         LOG.info("START - updateWorkweek(id={}, workweekDTO={})", id, workweekDTO);
 
         //check if ids match, otherwise it might be something wrong with input data
         if(id != workweekDTO.getId()) {
             LOG.error("Provided path id={} and workweekDTO object id={} do not match!", id, workweekDTO.getId());
-            throw new IllegalArgumentException("Provided path id and workweekDTO object id do not match!");
+            throw new IllegalArgumentException("Provided path id and workweekDTO.id do not match!");
         }
 
         return workweekService.updateWorkweek(workweekDTO);
     }
 
+    /**
+     * Delete resource and return http status 204 (no content)
+     * @param id
+     */
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWorkweek(@PathVariable("id") Long id) {

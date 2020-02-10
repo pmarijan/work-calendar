@@ -16,9 +16,7 @@ import si.arctur.work.calendar.model.WorkCalendarDTO;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -39,26 +37,31 @@ public class WorkCalendarService {
 	@Autowired
 	private HolidayConverter holidayConverter;
 
-	public List<WorkCalendarDTO> getWorkCalendars(String description, String name, String workDays, Integer year) {
+	public List<WorkCalendarDTO> getWorkCalendars(String description, String name, EnumSet<DayOfWeek> workDays, Integer year) {
+		LOG.info("START - getWorkCalendars(description={}, name={}, workDays={}, year={})", description, name, workDays, year);
 
 		WorkCalendarEntity workCalendarEntity = new WorkCalendarEntity();
 		workCalendarEntity.setDescription(description);
 		workCalendarEntity.setName(name);
-		workCalendarEntity.setWorkdays(workDays);
+		workCalendarEntity.getWorkdays().addAll(workDays);
 		workCalendarEntity.setYear(year);
 
-		return calendarRepository.findAll(Example.of(workCalendarEntity)).stream().map(cal -> workCalendarConverter.convert(cal)).collect(Collectors.toList());
+		List<WorkCalendarEntity> workCalendarEntities = calendarRepository.findAll(Example.of(workCalendarEntity));
+
+		LOG.info("END - getWorkCalendars");
+		return workCalendarEntities.stream().map(workCalendarConverter::convert).collect(Collectors.toList());
 	}
 
 	public WorkCalendarDTO getWorkCalendar(Long id) {
 		return workCalendarConverter.convert(calendarRepository.getWorkCalendarEntityById(id));
 	}
 
-	public long getWorkdayCount(LocalDate from, LocalDate to) {
-        LOG.info("START - getWorkdayCount(from={}, to={})", from, to);
+	public long getWorkdayCount(Long id, LocalDate from, LocalDate to) {
+        LOG.info("START - getWorkdayCount(id={}, from={}, to={})", id, from, to);
 
         //get collection of holidays for year from provided date range
-        Collection<HolidayEntity> holidays = holidayRepository.getHolidayEntitiesByYear(from.getYear());
+		WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(id);
+		Set<HolidayEntity> holidays = workCalendarEntity.getHolidays();
 
         //convert collection to map for easier date search
         Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(h -> h.getDate(), h -> h));
@@ -67,40 +70,40 @@ public class WorkCalendarService {
         Function<LocalDate, Boolean> isWorkday = (LocalDate date) -> {
             Boolean result = false;
 
-            if(!date.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !date.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-                if(holidaysMap.containsKey(date)) {
-                    if (!holidaysMap.get(date).getWorkFree()) {
-                        result = true;
-                    }
-                } else {
-                    result = true;
-                }
+            //day is workingday if it's not weekend and if it's not a workfree holiday
+            if(workCalendarEntity.getWorkdays().contains(date.getDayOfWeek())) {
+
+				//check if it's holiday and if it's workfree holiday
+            	result = !(holidaysMap.containsKey(date) && holidaysMap.get(date).getWorkFree());
             }
 
             return result;
         };
 
         long numOfWorkingDays = getDatesRange(from, to).stream().filter(l -> isWorkday.apply(l)).count();
+
+        LOG.info("END - getWorkdayCount: {}", numOfWorkingDays);
         return numOfWorkingDays;
     }
 
-	public List<DayDTO> getListOfDays(LocalDate from, LocalDate to) {
-		LOG.info("START - getListOfDays(from={}, to={})", from, to);
+	public List<DayDTO> getListOfDays(Long id, LocalDate from, LocalDate to) {
+		LOG.info("START - getListOfDays(id={}, from={}, to={})", id, from, to);
 
 		//get collection of holidays for year from provided date range
-		Collection<HolidayEntity> holidays = holidayRepository.getHolidayEntitiesByYear(from.getYear());
+		WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(id);
+		Set<HolidayEntity> holidays = workCalendarEntity.getHolidays();
 
 		//convert collection to map for easier date search
 		Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(h -> h.getDate(), h -> h));
 
 		//function check if date is weekend or holiday
-		Function<LocalDate, DayDTO> isWeekendOrHoliday = (LocalDate date) -> {
+		Function<LocalDate, DayDTO> workdayOrHolidayCheck = (LocalDate date) -> {
 			DayDTO day = new DayDTO();
 			day.setDate(date);
+			day.setDayOfWeek(date.getDayOfWeek().name());
 
-			if(date.getDayOfWeek().equals(DayOfWeek.SATURDAY) || date.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-				day.setWeekend(true);
-			}
+			//check if date is weekend or not, which day is weekend or workday is specified in WorkCalendar.workdays
+			day.setWeekend(!workCalendarEntity.getWorkdays().contains(date.getDayOfWeek()));
 
 			if(holidaysMap.containsKey(date)) {
 				day.setHoliday(holidayConverter.convert(holidaysMap.get(date)));
@@ -110,8 +113,9 @@ public class WorkCalendarService {
 		};
 
 		//iterate trough list of dates and check if weekend or holiday
-		List<DayDTO> days = getDatesRange(from, to).stream().map(l -> isWeekendOrHoliday.apply(l)).collect(Collectors.toList());
+		List<DayDTO> days = getDatesRange(from, to).stream().map(l -> workdayOrHolidayCheck.apply(l)).collect(Collectors.toList());
 
+		LOG.info("END - getListOfDays: {}", days);
 		return days;
 	}
 
@@ -123,7 +127,11 @@ public class WorkCalendarService {
 	 * @return List<LocalDate>
 	 */
 	private List<LocalDate> getDatesRange(LocalDate from, LocalDate to) {
-		long numberOfDays = ChronoUnit.DAYS.between(from, to);
+		if(from.isAfter(to)) {
+			throw new IllegalArgumentException("From date can not be after to date!");
+		}
+		long numberOfDays = ChronoUnit.DAYS.between(from, to) + 1;
+
 		return LongStream.range(0, numberOfDays).mapToObj(from::plusDays).collect(Collectors.toList());
 	}
 }

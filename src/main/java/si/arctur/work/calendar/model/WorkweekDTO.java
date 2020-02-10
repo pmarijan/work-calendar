@@ -1,5 +1,6 @@
 package si.arctur.work.calendar.model;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

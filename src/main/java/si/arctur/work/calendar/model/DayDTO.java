@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class DayDTO {
     private LocalDate date;
+    private String dayOfWeek;
     private HolidayDTO holiday;
     private Boolean isWeekend;
 
@@ -31,10 +32,19 @@ public class DayDTO {
         isWeekend = weekend;
     }
 
+    public String getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
     @Override
     public String toString() {
         return "DayDTO{" +
                 "date=" + date +
+                ", dayOfWeek='" + dayOfWeek + '\'' +
                 ", holiday=" + holiday +
                 ", isWeekend=" + isWeekend +
                 '}';

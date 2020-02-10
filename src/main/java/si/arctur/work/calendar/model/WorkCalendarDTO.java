@@ -2,16 +2,20 @@ package si.arctur.work.calendar.model;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.DayOfWeek;
+import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class WorkCalendarDTO {
     private Long id;
     private String description;
     @NotNull
     private String name;
-    private String workdays;
     @NotNull
     @Min(0)
     private Integer year;
+    private Set<DayOfWeek> workdays;
 
     public Long getId() {
         return id;
@@ -37,11 +41,14 @@ public class WorkCalendarDTO {
         this.name = name;
     }
 
-    public String getWorkdays() {
+    public Set<DayOfWeek> getWorkdays() {
+        if(Objects.isNull(this.workdays)) {
+            this.workdays = EnumSet.noneOf(DayOfWeek.class);
+        }
         return workdays;
     }
 
-    public void setWorkdays(String workdays) {
+    public void setWorkdays(Set<DayOfWeek> workdays) {
         this.workdays = workdays;
     }
 
