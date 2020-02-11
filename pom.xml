@@ -13,11 +13,11 @@
     <groupId>si.arctur</groupId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>Spring Boot Simple Sample</name>
-    <description>Spring Boot Simple Sample</description>
+    <name>Work Calendar</name>
+    <description>Work Calendar application api</description>
 
     <properties>
-<!--        <main.basedir>${basedir}/../..</main.basedir>-->
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -64,12 +64,12 @@
             <version>3.9</version>
         </dependency>
 
-        		<dependency>
-        			<groupId>com.h2database</groupId>
-        			<artifactId>h2</artifactId>
-        			<version>1.4.200</version>
-        			<scope>runtime</scope>
-        		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.200</version>
+            <scope>runtime</scope>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>mysql</groupId>-->
 <!--            <artifactId>mysql-connector-java</artifactId>-->
@@ -92,6 +92,7 @@
     </dependencies>
 
     <build>
+        <finalName>work-calendar</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

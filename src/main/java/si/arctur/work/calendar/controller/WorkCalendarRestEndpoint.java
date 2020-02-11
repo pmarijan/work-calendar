@@ -61,8 +61,8 @@ public class WorkCalendarRestEndpoint {
     }
 
     @GetMapping(path = "/{id}")
-    public WorkCalendarDTO getCalendar(@PathVariable("id") Long id) {
-        LOG.info("START - getCalendar(id={})", id);
+    public WorkCalendarDTO getWorkCalendar(@PathVariable("id") Long id) {
+        LOG.info("START - getWorkCalendar(id={})", id);
 
         WorkCalendarDTO result = workCalendarService.getWorkCalendar(id);
         if(Objects.isNull(result)) {
@@ -90,6 +90,13 @@ public class WorkCalendarRestEndpoint {
         return days;
     }
 
+    /**
+     * Count number of workdays - weekends and workfree holidays excluded
+     * @param id
+     * @param from
+     * @param to
+     * @return
+     */
     @GetMapping(path = "/{id}/count")
     public Long countWorkDays(@PathVariable(value = "id") Long id,
                               @RequestParam(value = "from") LocalDate from,

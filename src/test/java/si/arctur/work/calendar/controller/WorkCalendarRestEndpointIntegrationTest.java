@@ -11,8 +11,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import si.arctur.work.calendar.model.DayDTO;
 import si.arctur.work.calendar.model.WorkCalendarDTO;
-
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -24,7 +24,7 @@ public class WorkCalendarRestEndpointIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void test() {
+    public void testGetWorkCalendars_getNotEmpty() {
         ResponseEntity<List<WorkCalendarDTO>> calendarList = restTemplate.exchange("/workcalendar", HttpMethod.GET, null, new ParameterizedTypeReference<List<WorkCalendarDTO>>() {});
 
         Assert.assertNotNull(calendarList);
@@ -32,10 +32,29 @@ public class WorkCalendarRestEndpointIntegrationTest {
     }
 
     @Test
-    public void test1() {
+    public void testGetWorkCalendar_getOne() {
         ResponseEntity<WorkCalendarDTO> calendar = restTemplate.exchange("/workcalendar/1", HttpMethod.GET, null, new ParameterizedTypeReference<WorkCalendarDTO>() {});
 
-        Assert.assertNotNull(calendar);
-        Assert.assertNotNull(calendar.getBody());
+        WorkCalendarDTO workCalendarDTO = calendar.getBody();
+
+        Assert.assertNotNull(workCalendarDTO);
+        Assert.assertFalse(workCalendarDTO.getWorkdays().isEmpty());
+    }
+
+    @Test
+    public void testGetListOfDays_getNotEmpty() {
+        ResponseEntity<List<DayDTO>> days = restTemplate.exchange("/workcalendar/1/day?from=2020-01-01&to=2020-01-31", HttpMethod.GET, null, new ParameterizedTypeReference<List<DayDTO>>() {});
+
+        Assert.assertNotNull(days);
+        Assert.assertFalse(days.getBody().isEmpty());
+    }
+
+    @Test
+    public void testCountWorkDays() {
+        ResponseEntity<Long> count = restTemplate.exchange("/workcalendar/1/count?from=2020-01-01&to=2020-01-31", HttpMethod.GET, null, new ParameterizedTypeReference<Long>() {});
+
+        Assert.assertNotNull(count);
+        Assert.assertNotNull(count.getBody());
+        Assert.assertTrue(count.getBody() > 0);
     }
 }

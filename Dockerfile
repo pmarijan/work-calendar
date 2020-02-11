@@ -17,10 +17,10 @@ USER pmarijan:pmarijan
 ARG JAR_FILE=target/*.jar
 
 #copy project files to container
-COPY ${JAR_FILE} workCalendar.jar
+COPY ${JAR_FILE} work-calendar.jar
 
 #port which should be exposed to public
 EXPOSE 8080
 
 #execute spring-boot application
-ENTRYPOINT ["java","-jar","/workCalendar.jar"]
+ENTRYPOINT ["java","-jar","/work-calendar.jar"]

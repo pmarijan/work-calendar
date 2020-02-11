@@ -1,0 +1,44 @@
+# Namespaces configuration - optional
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arctur
+  labels:
+    name: arctur
+---
+# Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: arctur
+  name: work-calendar-service
+spec:
+  selector:
+    app: work-calendar
+    enabled: "true"
+  ports:
+    - protocol: TCP
+      port: 8080
+  type: NodePort
+---
+# Deployment configuration
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: work-calendar
+spec:
+  selector:
+    matchLabels:
+      app: work-calendar
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: work-calendar
+    spec:
+      containers:
+        - name: work-calendar
+          image: arctur/work-calendar:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
