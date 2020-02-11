@@ -22,7 +22,7 @@ public class WorkweekRepositoryTest {
 
     @Test
     public void testGetWorkweekEntityById_getOne() {
-        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityById(Long.valueOf(2));
+        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityByIdAndWorkCalendar(Long.valueOf(2), new WorkCalendarEntity(Long.valueOf(1)));
 
         Assert.assertNotNull(workweekEntity);
         Assert.assertEquals(Long.valueOf(2), workweekEntity.getId());
@@ -33,13 +33,13 @@ public class WorkweekRepositoryTest {
 
     @Test
     public void testGetWorkweekEntityById_getNull() {
-        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityById(Long.MAX_VALUE);
+        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityByIdAndWorkCalendar(Long.MAX_VALUE, new WorkCalendarEntity(Long.valueOf(1)));
         Assert.assertNull(workweekEntity);
     }
 
     @Test
     public void testGetWorkweekEntityById_getNullForNullInput() {
-        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityById(null);
+        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityByIdAndWorkCalendar(null, null);
         Assert.assertNull(workweekEntity);
     }
 

@@ -10,7 +10,7 @@ public interface WorkweekRepository extends JpaRepository<WorkweekEntity, Long> 
 
 //    Collection<WorkweekEntity> getWorkweekEntitiesByDescriptionOrWeekNumber(@Param("description") String description, @Param("weekNumber") Integer weekNumber);
 
-    WorkweekEntity getWorkweekEntityById(Long id);
+    WorkweekEntity getWorkweekEntityByIdAndWorkCalendar(Long id, WorkCalendarEntity workCalendarEntity);
 
     Collection<WorkweekEntity> getWorkweekEntitiesByWorkCalendar(WorkCalendarEntity workCalendarEntity);
 }

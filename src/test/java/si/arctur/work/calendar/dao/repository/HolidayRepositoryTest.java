@@ -24,7 +24,7 @@ public class HolidayRepositoryTest {
 
     @Test
     public void testGetHolidayEntityById_getOne() {
-        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityById(Long.valueOf(1));
+        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendars(Long.valueOf(1), new WorkCalendarEntity(Long.valueOf(1)));
 
         Assert.assertNotNull(holidayEntityResult);
         Assert.assertEquals("Novo leto", holidayEntityResult.getName());
@@ -32,7 +32,7 @@ public class HolidayRepositoryTest {
 
     @Test
     public void testGetHolidayEntityById_getNull() {
-        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityById(Long.MAX_VALUE);
+        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendars(Long.MAX_VALUE, new WorkCalendarEntity(Long.valueOf(1)));
 
         Assert.assertNull(holidayEntityResult);
     }

@@ -43,7 +43,7 @@ public class CalendarRepositoryTest {
 
     @Test
     public void testGetWorkCalendarEntityById_getOne() {
-        WorkCalendarEntity workCalendarEntityResult = calendarRepository.getWorkCalendarEntityById(1);
+        WorkCalendarEntity workCalendarEntityResult = calendarRepository.getWorkCalendarEntityById(Long.valueOf(1));
 
         Assert.assertNotNull(workCalendarEntityResult);
         Assert.assertEquals("Some test description for Test Work Calendar 2020", workCalendarEntityResult.getDescription());

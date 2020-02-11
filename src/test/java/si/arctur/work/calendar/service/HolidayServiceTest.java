@@ -11,7 +11,9 @@ import org.springframework.data.domain.Example;
 import org.springframework.test.context.junit4.SpringRunner;
 import si.arctur.work.calendar.dao.entity.HolidayEntity;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
+import si.arctur.work.calendar.dao.repository.CalendarRepository;
 import si.arctur.work.calendar.dao.repository.HolidayRepository;
+import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.HolidayDTO;
 import si.arctur.work.calendar.model.WorkCalendarDTO;
 
@@ -28,6 +30,9 @@ public class HolidayServiceTest {
     @MockBean
     private HolidayRepository holidayRepository;
 
+    @MockBean
+    private CalendarRepository calendarRepository;
+
     @Autowired
     private HolidayService holidayService;
 
@@ -35,7 +40,7 @@ public class HolidayServiceTest {
     public void testGetHolidays_getOne() {
         Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(generateHolidayEntityList(1));
 
-        List<HolidayDTO> holidays = holidayService.getHolidays(LocalDate.of(2020,2,8), null, null);
+        List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
         Assert.assertFalse(holidays.isEmpty());
         Assert.assertTrue(holidays.size() == 1);
@@ -45,7 +50,7 @@ public class HolidayServiceTest {
     public void testGetHolidays_getTwo() {
         Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(generateHolidayEntityList(2));
 
-        List<HolidayDTO> holidays = holidayService.getHolidays(LocalDate.of(2020,2,8), null, null);
+        List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
         Assert.assertFalse(holidays.isEmpty());
         Assert.assertTrue(holidays.size() == 2);
@@ -55,7 +60,7 @@ public class HolidayServiceTest {
     public void testGetHolidays_getEmptyCollection() {
         Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(new ArrayList<>());
 
-        List<HolidayDTO> holidays = holidayService.getHolidays(LocalDate.of(2020,2,8), "bla bla bla", true);
+        List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), "bla bla bla", true);
         Assert.assertNotNull(holidays);
         Assert.assertTrue(holidays.isEmpty());
     }
@@ -80,16 +85,16 @@ public class HolidayServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetHoliday_getExceptionForNullInput() {
-        holidayService.getHoliday(null);
+        holidayService.getHoliday(null, null);
 
         Assert.fail("Exception should be thrown!");
     }
 
     @Test
     public void testGetHoliday_getOne() {
-        Mockito.when(holidayRepository.getHolidayEntityById(Long.valueOf(1))).thenReturn(generateHolidayEntity(Long.valueOf(1)));
+        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendars(Mockito.anyLong(), Mockito.any(WorkCalendarEntity.class))).thenReturn(generateHolidayEntity(Long.valueOf(1)));
 
-        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1));
+        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(Long.valueOf(1), result.getId());
@@ -97,16 +102,23 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHoliday_getNull() {
-        Mockito.when(holidayRepository.getHolidayEntityById(Long.valueOf(1))).thenReturn(null);
+        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendars(Mockito.anyLong(), Mockito.any(WorkCalendarEntity.class))).thenReturn(null);
 
-        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1));
+        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
 
         Assert.assertNull(result);
     }
 
+    @Test(expected = ResourceNotFoundException.class)
+    public void testAddHoliday_getExceptionForNullCalendarIdInput() {
+        holidayService.addHolidayToCalendar(null, generateHolidayDTO(null));
+
+        Assert.fail("Exception should be thrown!");
+    }
+
     @Test(expected = IllegalArgumentException.class)
-    public void testAddHoliday_getExceptionForNullInput() {
-        holidayService.addHoliday(null);
+    public void testAddHoliday_getExceptionForNullHolidayInput() {
+        holidayService.addHolidayToCalendar(Long.valueOf(1), null);
 
         Assert.fail("Exception should be thrown!");
     }
@@ -114,8 +126,11 @@ public class HolidayServiceTest {
     @Test
     public void testAddHoliday_getOne() {
         Mockito.when(holidayRepository.save(Mockito.any(HolidayEntity.class))).thenReturn(generateHolidayEntity(Long.valueOf(1)));
+        Mockito.when(holidayRepository.saveAndFlush(Mockito.any(HolidayEntity.class))).thenReturn(generateHolidayEntity(Long.valueOf(1)));
+        Mockito.when(calendarRepository.save(Mockito.any(WorkCalendarEntity.class))).thenReturn(generateWorkCalendarEntity());
+        Mockito.when(calendarRepository.getWorkCalendarEntityById(Mockito.anyLong())).thenReturn(generateWorkCalendarEntity());
 
-        HolidayDTO holidayDTO = holidayService.addHoliday(generateHolidayDTO(null));
+        HolidayDTO holidayDTO = holidayService.addHolidayToCalendar(Long.valueOf(1), generateHolidayDTO(null));
 
         Assert.assertNotNull(holidayDTO);
         Assert.assertEquals(Long.valueOf(1), holidayDTO.getId());
@@ -173,7 +188,7 @@ public class HolidayServiceTest {
         workCalendarEntity.setDescription("Test work calendar");
         workCalendarEntity.setName("Calendar 1");
         workCalendarEntity.setYear(2020);
-        workCalendarEntity.setWorkdays(EnumSet.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY));
+        workCalendarEntity.setWorkdays(new StringJoiner(",").add(DayOfWeek.MONDAY.name()).add(DayOfWeek.TUESDAY.name()).toString());
 
         return workCalendarEntity;
     }

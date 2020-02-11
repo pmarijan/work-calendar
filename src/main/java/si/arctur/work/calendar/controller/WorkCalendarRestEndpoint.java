@@ -103,62 +103,32 @@ public class WorkCalendarRestEndpoint {
     }
 
     //holiday rest endpoints
-    @GetMapping(path = "/{calendarId}/holiday")
-    public List<HolidayDTO> getHolidaysForCalendar(@PathVariable("calendarId") Long calendarId) {
-        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
-
-        List<HolidayDTO> result = holidayService.getHolidaysForCalendar(calendarId);
-        if(result.isEmpty()) {
-            LOG.error("No holiday objects found for calendarId={}", calendarId);
-            throw new ResourceNotFoundException("No holiday objects found");
-        }
-
-        LOG.info("END - getHolidaysForCalendar: {}", result);
-        return result;
-    }
-
-    /**
-     *
-     * @param calendarId
-     * @param holidayId
-     */
-    @DeleteMapping(path = "/{calendarId}/holiday/{holidayId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteHolidayForCalendar(@PathVariable("calendarId") Long calendarId, @PathVariable("holidayId") Long holidayId) {
-        LOG.info("START - deleteHolidayForCalendar(calendarId={}, holidayId={})", calendarId, holidayId);
-
-        holidayService.deleteHoliday(calendarId, holidayId);
-    }
-
-    @PostMapping(path = "/{calendarId}/holiday/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addHolidayForCalendar(@PathVariable("calendarId") Long calendarId, @RequestBody HolidayDTO holidayDTO) {
-        LOG.info("START - addHolidayForCalendar(calendarId={}, holidayDTO={})", calendarId, holidayDTO);
-
-        holidayService.addHolidayToCalendar(calendarId, holidayDTO);
-    }
+//    @GetMapping(path = "/{calendarId}/holiday")
+//    public List<HolidayDTO> getHolidaysForCalendar(@PathVariable("calendarId") Long calendarId) {
+//        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
+//
+//        List<HolidayDTO> result = holidayService.getHolidaysForCalendar(calendarId);
+//        if(result.isEmpty()) {
+//            LOG.error("No holiday objects found for calendarId={}", calendarId);
+//            throw new ResourceNotFoundException("No holiday objects found");
+//        }
+//
+//        LOG.info("END - getHolidaysForCalendar: {}", result);
+//        return result;
+//    }
 
     //workweek rest endpoints
-    @GetMapping(path = "/{calendarId}/workweek")
-    public List<WorkweekDTO> getWorkweeksForCalendar(@PathVariable("calendarId") Long calendarId) {
-        LOG.info("START - getWorkweeksForCalendar(calendarId={})", calendarId);
-        List<WorkweekDTO> workweekDTOS = workweekService.getWorkweeksByCalendarId(calendarId);
-
-        if(workweekDTOS.isEmpty()) {
-            LOG.error("No workweek objects found for calendarId={}", calendarId);
-            throw new ResourceNotFoundException("No workweek objects found");
-        }
-
-        LOG.info("END - getWorkweeksForCalendar: {}", workweekDTOS);
-        return workweekDTOS;
-    }
-
-    @DeleteMapping(path = "/{calendarId}/workweek/{workweekId}")
-    public void deleteWorkweekForCalendar(@PathVariable("calendarId") Long calendarId, @PathVariable("workweekId") Long workweekId) {
-        workweekService.deleteWorkweek(calendarId, workweekId);
-    }
-
-//    @PostMapping(path = "/{calendarId}/workweek/")
-//    public void addWorkweekForCalendar(@PathVariable("calendarId") Long calendarId, @RequestBody WorkweekDTO workweek) {
+//    @GetMapping(path = "/{calendarId}/workweek")
+//    public List<WorkweekDTO> getWorkweeksForCalendar(@PathVariable("calendarId") Long calendarId) {
+//        LOG.info("START - getWorkweeksForCalendar(calendarId={})", calendarId);
+//        List<WorkweekDTO> workweekDTOS = workweekService.getWorkweeksByCalendarId(calendarId);
 //
+//        if(workweekDTOS.isEmpty()) {
+//            LOG.error("No workweek objects found for calendarId={}", calendarId);
+//            throw new ResourceNotFoundException("No workweek objects found");
+//        }
+//
+//        LOG.info("END - getWorkweeksForCalendar: {}", workweekDTOS);
+//        return workweekDTOS;
 //    }
 }

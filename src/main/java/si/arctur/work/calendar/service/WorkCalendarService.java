@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
+import si.arctur.work.calendar.converter.DayOfWeekEnumSetConverter;
 import si.arctur.work.calendar.converter.HolidayConverter;
 import si.arctur.work.calendar.converter.WorkCalendarConverter;
 import si.arctur.work.calendar.dao.entity.HolidayEntity;
@@ -37,13 +38,18 @@ public class WorkCalendarService {
 	@Autowired
 	private HolidayConverter holidayConverter;
 
+	@Autowired
+	private DayOfWeekEnumSetConverter dayOfWeekEnumSetConverter;
+
 	public List<WorkCalendarDTO> getWorkCalendars(String description, String name, EnumSet<DayOfWeek> workDays, Integer year) {
 		LOG.info("START - getWorkCalendars(description={}, name={}, workDays={}, year={})", description, name, workDays, year);
 
 		WorkCalendarEntity workCalendarEntity = new WorkCalendarEntity();
 		workCalendarEntity.setDescription(description);
 		workCalendarEntity.setName(name);
-		workCalendarEntity.getWorkdays().addAll(workDays);
+		if(Objects.nonNull(workDays)) {
+			workCalendarEntity.setWorkdays(workDays.stream().map(d -> d.name()).collect(Collectors.joining(",")));
+		}
 		workCalendarEntity.setYear(year);
 
 		List<WorkCalendarEntity> workCalendarEntities = calendarRepository.findAll(Example.of(workCalendarEntity));
@@ -70,8 +76,9 @@ public class WorkCalendarService {
         Function<LocalDate, Boolean> isWorkday = (LocalDate date) -> {
             Boolean result = false;
 
+			Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
             //day is workingday if it's not weekend and if it's not a workfree holiday
-            if(workCalendarEntity.getWorkdays().contains(date.getDayOfWeek())) {
+            if(workdays.contains(date.getDayOfWeek())) {
 
 				//check if it's holiday and if it's workfree holiday
             	result = !(holidaysMap.containsKey(date) && holidaysMap.get(date).getWorkFree());
@@ -102,8 +109,9 @@ public class WorkCalendarService {
 			day.setDate(date);
 			day.setDayOfWeek(date.getDayOfWeek().name());
 
+			Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
 			//check if date is weekend or not, which day is weekend or workday is specified in WorkCalendar.workdays
-			day.setWeekend(!workCalendarEntity.getWorkdays().contains(date.getDayOfWeek()));
+			day.setWeekend(!workdays.contains(date.getDayOfWeek()));
 
 			if(holidaysMap.containsKey(date)) {
 				day.setHoliday(holidayConverter.convert(holidaysMap.get(date)));

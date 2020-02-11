@@ -25,8 +25,7 @@ public class WorkCalendarEntity {
     private String name;
 
     @Column(name = "workdays")
-    @Convert(converter = EnumSetToStringConverter.class)
-    private Set<DayOfWeek> workdays;
+    private String workdays;
 
     @Column(name = "year", nullable = false)
     private Integer year;
@@ -34,7 +33,7 @@ public class WorkCalendarEntity {
     @OneToMany(mappedBy="workCalendar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<WorkweekEntity> workweekSet;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "work_calendar2holiday",
                 joinColumns = @JoinColumn(name = "work_calendar_id"), inverseJoinColumns = @JoinColumn(name = "holiday_id"))
     private Set<HolidayEntity> holidays;
@@ -69,14 +68,11 @@ public class WorkCalendarEntity {
         this.name = name;
     }
 
-    public Set<DayOfWeek> getWorkdays() {
-        if(Objects.isNull(this.workdays)) {
-            this.workdays = EnumSet.noneOf(DayOfWeek.class);
-        }
+    public String getWorkdays() {
         return workdays;
     }
 
-    public void setWorkdays(EnumSet<DayOfWeek> workdays) {
+    public void setWorkdays(String workdays) {
         this.workdays = workdays;
     }
 
@@ -100,6 +96,9 @@ public class WorkCalendarEntity {
     }
 
     public Set<HolidayEntity> getHolidays() {
+        if(Objects.isNull(holidays)) {
+            holidays = new HashSet<>();
+        }
         return holidays;
     }
 

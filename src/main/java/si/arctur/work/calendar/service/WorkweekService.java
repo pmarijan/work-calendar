@@ -13,6 +13,7 @@ import si.arctur.work.calendar.dao.repository.WorkweekRepository;
 import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.WorkweekDTO;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
@@ -31,20 +32,22 @@ public class WorkweekService {
     @Autowired
     private WorkweekConverter workweekConverter;
 
-    public List<WorkweekDTO> getWorkweeks(String description, Integer weekNumber) {
-        LOG.info("START - getWorkWeeks(description={}, weekNumber={})", description, weekNumber);
+    public List<WorkweekDTO> getWorkweeks(Long calendarId, String description, Integer weekNumber) {
+        LOG.info("START - getWorkWeeks(calendarId={}, description={}, weekNumber={})", calendarId, description, weekNumber);
 
         WorkweekEntity workweekEntity = new WorkweekEntity();
         workweekEntity.setDescription(description);
         workweekEntity.setWeekNumber(weekNumber);
-
+        if(Objects.nonNull(calendarId)) {
+            workweekEntity.setWorkCalendar(new WorkCalendarEntity(calendarId));
+        }
         return workweekRepository.findAll(Example.of(workweekEntity)).stream().map(workWeek -> workweekConverter.convert(workWeek)).collect(Collectors.toList());
     }
 
-    public WorkweekDTO getWorkweek(Long workweekId) {
-        LOG.info("START - getWorkweek(workweekId={})", workweekId);
+    public WorkweekDTO getWorkweek(Long calendarId, Long workweekId) {
+        LOG.info("START - getWorkweek(calendarId={}, workweekId={})", calendarId, workweekId);
 
-        return workweekConverter.convert(workweekRepository.getWorkweekEntityById(workweekId));
+        return workweekConverter.convert(workweekRepository.getWorkweekEntityByIdAndWorkCalendar(workweekId, new WorkCalendarEntity(calendarId)));
     }
 
     public List<WorkweekDTO> getWorkweeksByCalendarId(Long calendarId) {
@@ -55,21 +58,32 @@ public class WorkweekService {
                 .collect(Collectors.toList());
     }
 
-    public WorkweekDTO addWorkweek(WorkweekDTO workweekDTO) {
-        LOG.info("START - addWorkweek(workweekDTO={})", workweekDTO);
+    public WorkweekDTO addWorkweek(Long calendarId, WorkweekDTO workweekDTO) {
+        LOG.info("START - addWorkweek(calendarId={}, workweekDTO={})", calendarId, workweekDTO);
+
+        WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(calendarId);
+        if(Objects.isNull(workCalendarEntity)) {
+            LOG.error("workcalendar object with id={} does not exist!", calendarId);
+            throw new ResourceNotFoundException("workcalendar object does not exist!");
+        }
 
         WorkweekEntity workweekEntity = new WorkweekEntity();
         workweekEntity.setDescription(workweekDTO.getDescription());
         workweekEntity.setWeekNumber(workweekDTO.getWeekNumber());
-        workweekEntity.setWorkCalendar(new WorkCalendarEntity(workweekDTO.getWorkCalendar().getId()));
+        workweekEntity.setWorkCalendar(workCalendarEntity);
 
         return workweekConverter.convert(workweekRepository.save(workweekEntity));
     }
 
-    public WorkweekDTO updateWorkweek(WorkweekDTO workweekDTO) {
-        LOG.info("START - updateWorkweek(workweekDTO={})", workweekDTO);
+    public WorkweekDTO updateWorkweek(Long calendarId, WorkweekDTO workweekDTO) {
+        LOG.info("START - updateWorkweek(calendarId={}, workweekDTO={})", calendarId, workweekDTO);
 
-        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityById(workweekDTO.getId());
+        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityByIdAndWorkCalendar(workweekDTO.getId(), new WorkCalendarEntity(calendarId));
+        if(Objects.isNull(workweekEntity)) {
+            LOG.error("workweek object with calendarId={} and id={} does not exist!", calendarId, workweekDTO.getId());
+            throw new ResourceNotFoundException("workcalendar object does not exist!");
+        }
+
         workweekEntity.setDescription(workweekDTO.getDescription());
         workweekEntity.setWeekNumber(workweekDTO.getWeekNumber());
 
@@ -85,8 +99,8 @@ public class WorkweekService {
             throw new ResourceNotFoundException("workcalendar object does not exist!");
         }
 
-        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityById(workweekId);
-        if(Objects.isNull(workCalendarEntity)) {
+        WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityByIdAndWorkCalendar(workweekId, workCalendarEntity);
+        if(Objects.isNull(workweekEntity)) {
             LOG.error("workweek object with id={} does not exist!", workweekId);
             throw new ResourceNotFoundException("workweek object does not exist!");
         }
@@ -94,10 +108,5 @@ public class WorkweekService {
         workweekRepository.delete(workweekEntity);
 
         LOG.info("END - deleteWorkweek");
-    }
-
-    public void deleteWorkweek(Long workweekId) {
-        LOG.info("START - deleteWorkweek(workweekId={})", workweekId);
-        workweekRepository.delete(new WorkweekEntity(workweekId));
     }
 }

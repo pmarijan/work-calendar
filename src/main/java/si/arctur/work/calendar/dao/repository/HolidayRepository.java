@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public interface HolidayRepository extends JpaRepository<HolidayEntity, Long> {
 
-    HolidayEntity getHolidayEntityById(Long id);
+    HolidayEntity getHolidayEntityByIdAndWorkCalendars(Long id, WorkCalendarEntity workCalendarEntity);
 
 //    Collection<HolidayEntity> getHolidayEntitiesByDateOrNameOrWorkFree(@Param("date") LocalDate date, @Param("name") String name, @Param("workFree") Boolean workFree);
 
