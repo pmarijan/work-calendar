@@ -1,15 +1,11 @@
 package si.arctur.work.calendar.converter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import si.arctur.work.calendar.dao.EnumSetToStringConverter;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
 import si.arctur.work.calendar.model.WorkCalendarDTO;
 
-import java.time.DayOfWeek;
-import java.util.EnumSet;
 import java.util.Objects;
 
 @Component

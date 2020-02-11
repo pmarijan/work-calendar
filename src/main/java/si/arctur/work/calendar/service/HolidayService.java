@@ -34,34 +34,34 @@ public class HolidayService {
     @Autowired
     private HolidayConverter holidayConverter;
 
+    /**
+     *
+     * @param calendarId
+     * @param date
+     * @param name
+     * @param isWorkFree
+     * @return
+     */
     public List<HolidayDTO> getHolidays(Long calendarId, LocalDate date, String name, Boolean isWorkFree) {
         LOG.info("START - getHolidays(calendarId={}, date={}, name={}, isWorkFree={})", calendarId, date, name, isWorkFree);
 
-        HolidayEntity holidayEntity = new HolidayEntity();
-        holidayEntity.setDate(date);
-        holidayEntity.setName(name);
-        holidayEntity.setWorkFree(isWorkFree);
-        if(Objects.nonNull(calendarId)) {
-            holidayEntity.setWorkCalendars(Arrays.asList(new WorkCalendarEntity(calendarId)));
-        }
-
-        return holidayRepository.findAll(Example.of(holidayEntity)).stream()
+        return holidayRepository.getHolidayEntites(calendarId, date, name, isWorkFree).stream()
                 .map(holiday -> holidayConverter.convert(holiday))
                 .collect(Collectors.toList());
     }
 
-    public List<HolidayDTO> getHolidaysForCalendar(Long calendarId) {
-        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
-
-        if(Objects.isNull(calendarId)) {
-            LOG.error("calendarId attribute must not be null!");
-            throw new IllegalArgumentException("calendarId attribute must not be null!");
-        }
-
-        return holidayRepository.getHolidayEntitiesByWorkCalendars(new WorkCalendarEntity(calendarId)).stream()
-                .map(holiday -> holidayConverter.convert(holiday))
-                .collect(Collectors.toList());
-    }
+//    public List<HolidayDTO> getHolidaysForCalendar(Long calendarId) {
+//        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
+//
+//        if(Objects.isNull(calendarId)) {
+//            LOG.error("calendarId attribute must not be null!");
+//            throw new IllegalArgumentException("calendarId attribute must not be null!");
+//        }
+//
+//        return holidayRepository.getHolidayEntitiesByWorkCalendars(calendarId).stream()
+//                .map(holiday -> holidayConverter.convert(holiday))
+//                .collect(Collectors.toList());
+//    }
 
     public HolidayDTO getHoliday(Long calendarId, Long id) {
         LOG.info("START - getHoliday(calendarId={}, id={})", calendarId, id);

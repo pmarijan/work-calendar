@@ -12,6 +12,7 @@ import si.arctur.work.calendar.dao.entity.HolidayEntity;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
 import si.arctur.work.calendar.dao.repository.CalendarRepository;
 import si.arctur.work.calendar.dao.repository.HolidayRepository;
+import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.DayDTO;
 import si.arctur.work.calendar.model.WorkCalendarDTO;
 import java.time.DayOfWeek;
@@ -62,11 +63,16 @@ public class WorkCalendarService {
 		return workCalendarConverter.convert(calendarRepository.getWorkCalendarEntityById(id));
 	}
 
-	public long getWorkdayCount(Long id, LocalDate from, LocalDate to) {
-        LOG.info("START - getWorkdayCount(id={}, from={}, to={})", id, from, to);
+	public long getWorkdayCount(Long calendarId, LocalDate from, LocalDate to) {
+        LOG.info("START - getWorkdayCount(calendarId={}, from={}, to={})", calendarId, from, to);
 
         //get collection of holidays for year from provided date range
-		WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(id);
+		WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(calendarId);
+		if(Objects.isNull(workCalendarEntity)) {
+			LOG.error("No workcalendar object found for calendarId={}", calendarId);
+			throw new ResourceNotFoundException("No workcalendar object found for calendarId=" + calendarId);
+		}
+
 		Set<HolidayEntity> holidays = workCalendarEntity.getHolidays();
 
         //convert collection to map for easier date search
@@ -93,11 +99,16 @@ public class WorkCalendarService {
         return numOfWorkingDays;
     }
 
-	public List<DayDTO> getListOfDays(Long id, LocalDate from, LocalDate to) {
-		LOG.info("START - getListOfDays(id={}, from={}, to={})", id, from, to);
+	public List<DayDTO> getListOfDays(Long calendarId, LocalDate from, LocalDate to) {
+		LOG.info("START - getListOfDays(calendarId={}, from={}, to={})", calendarId, from, to);
 
 		//get collection of holidays for year from provided date range
-		WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(id);
+		WorkCalendarEntity workCalendarEntity = calendarRepository.getWorkCalendarEntityById(calendarId);
+		if(Objects.isNull(workCalendarEntity)) {
+			LOG.error("No workcalendar object found for calendarId={}", calendarId);
+			throw new ResourceNotFoundException("No workcalendar object found for calendarId=" + calendarId);
+		}
+
 		Set<HolidayEntity> holidays = workCalendarEntity.getHolidays();
 
 		//convert collection to map for easier date search

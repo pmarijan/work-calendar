@@ -38,15 +38,15 @@ public class WorkweekRestEndpoint {
         return result;
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/{workweekId}")
     public WorkweekDTO getWorkweek(@PathVariable("calendarId") Long calendarId,
-                                   @PathVariable("id") Long id) {
-        LOG.info("START - getWorkweek(calendarId={}, id={})", calendarId, id);
+                                   @PathVariable("workweekId") Long workweekId) {
+        LOG.info("START - getWorkweek(calendarId={}, workweekId={})", calendarId, workweekId);
 
-        WorkweekDTO result = workweekService.getWorkweek(calendarId, id);
+        WorkweekDTO result = workweekService.getWorkweek(calendarId, workweekId);
         if(Objects.isNull(result)) {
-            LOG.error("No workweek object found for calendarId={} and id={}", calendarId, id);
-            throw new ResourceNotFoundException("No workweek object found for calendarId=" +calendarId + " and id=" + id);
+            LOG.error("No workweek object found for calendarId={} and workweekId={}", calendarId, workweekId);
+            throw new ResourceNotFoundException("No workweek object found for calendarId=" + calendarId + " and workweekId=" + workweekId);
         }
 
         LOG.info("END - getWorkweek: result={}", result);
@@ -60,16 +60,16 @@ public class WorkweekRestEndpoint {
         return workweekService.addWorkweek(calendarId, workweekDTO);
     }
 
-    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{workweekId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public WorkweekDTO updateWorkweek(@PathVariable("calendarId") Long calendarId,
-                                      @PathVariable("id") Long id,
+                                      @PathVariable("workweekId") Long workweekId,
                                       @Valid @NotNull @RequestBody WorkweekDTO workweekDTO) {
-        LOG.info("START - updateWorkweek(calendarId={}, id={}, workweekDTO={})", calendarId, id, workweekDTO);
+        LOG.info("START - updateWorkweek(calendarId={}, workweekId={}, workweekDTO={})", calendarId, workweekId, workweekDTO);
 
         //check if ids match, otherwise it might be something wrong with input data
-        if(id != workweekDTO.getId()) {
-            LOG.error("Provided path id={} and workweekDTO object id={} do not match!", id, workweekDTO.getId());
-            throw new IllegalArgumentException("Provided path id and workweekDTO.id do not match!");
+        if(workweekId != workweekDTO.getId()) {
+            LOG.error("Provided path calendarId={} and workweekDTO object workweekId={} do not match!", workweekId, workweekDTO.getId());
+            throw new IllegalArgumentException("Provided path calendarId and workweekDTO.workweekId do not match!");
         }
 
         return workweekService.updateWorkweek(calendarId, workweekDTO);
@@ -77,14 +77,14 @@ public class WorkweekRestEndpoint {
 
     /**
      * Delete resource and return http status 204 (no content)
-     * @param id
+     * @param workweekId
      */
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/{workweekId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWorkweek(@PathVariable("calendarId") Long calendarId,
-                               @PathVariable("id") Long id) {
-        LOG.info("START - deleteWorkweek(calendarId={}, id={})", calendarId, id);
+                               @PathVariable("workweekId") Long workweekId) {
+        LOG.info("START - deleteWorkweek(calendarId={}, workweekId={})", calendarId, workweekId);
 
-        workweekService.deleteWorkweek(calendarId, id);
+        workweekService.deleteWorkweek(calendarId, workweekId);
     }
 }

@@ -1,10 +1,6 @@
 package si.arctur.work.calendar.dao.entity;
 
-import si.arctur.work.calendar.dao.EnumSetToStringConverter;
-
 import javax.persistence.*;
-import java.time.DayOfWeek;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

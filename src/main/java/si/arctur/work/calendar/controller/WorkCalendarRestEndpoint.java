@@ -1,22 +1,18 @@
 package si.arctur.work.calendar.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import si.arctur.work.calendar.config.StringToEnumSetConverter;
 import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.DayDTO;
-import si.arctur.work.calendar.model.HolidayDTO;
 import si.arctur.work.calendar.model.WorkCalendarDTO;
-import si.arctur.work.calendar.model.WorkweekDTO;
-import si.arctur.work.calendar.service.HolidayService;
 import si.arctur.work.calendar.service.WorkCalendarService;
-import si.arctur.work.calendar.service.WorkweekService;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.EnumSet;
@@ -31,19 +27,27 @@ public class WorkCalendarRestEndpoint {
     @Autowired
     private WorkCalendarService workCalendarService;
 
-    @Autowired
-    private WorkweekService workweekService;
-
-    @Autowired
-    private HolidayService holidayService;
-
     //used for mapping string to enumset
     @InitBinder
     public void initBinder(final WebDataBinder webdataBinder) {
         webdataBinder.registerCustomEditor(DayOfWeek.class, new StringToEnumSetConverter());
     }
 
+    /**
+     * Get list of calendars, if no query parameters are provided all calendars are returned
+     *
+     * @param description
+     * @param year
+     * @param name
+     * @param workDays
+     * @return
+     */
     @GetMapping
+    @Operation(summary = "Get list of work calendars", description = "Get list of work calendars filtered by descritpion, year, name and workdays.",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "List of work calendars returned"),
+                @ApiResponse(responseCode = "404", description = "No work calendars found", content = @Content()),
+                @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public List<WorkCalendarDTO> getWorkCalendars(@RequestParam(value = "description", required = false) String description,
                                                   @RequestParam(value = "year", required = false) Integer year,
                                                   @RequestParam(value = "name", required = false) String name,
@@ -61,6 +65,11 @@ public class WorkCalendarRestEndpoint {
     }
 
     @GetMapping(path = "/{id}")
+    @Operation(summary = "Get work calendar", description = "Get work calendar for provided id.",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Work calendar returned"),
+                @ApiResponse(responseCode = "404", description = "Work calendar not found", content = @Content()),
+                @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public WorkCalendarDTO getWorkCalendar(@PathVariable("id") Long id) {
         LOG.info("START - getWorkCalendar(id={})", id);
 
@@ -75,6 +84,11 @@ public class WorkCalendarRestEndpoint {
     }
 
     @GetMapping(path = "/{id}/day")
+    @Operation(summary = "Get list of days", description = "Get list of days for selected interval.",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "List of days returned"),
+                @ApiResponse(responseCode = "404", description = "No days found", content = @Content()),
+                @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public List<DayDTO> getListOfDays(@PathVariable(value = "id") Long id,
                                       @RequestParam(value = "from") LocalDate from,
                                       @RequestParam(value = "to") LocalDate to) {
@@ -98,6 +112,11 @@ public class WorkCalendarRestEndpoint {
      * @return
      */
     @GetMapping(path = "/{id}/count")
+    @Operation(summary = "Count number of working days", description = "Count all working days for selected interval.",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Return number of working days"),
+                @ApiResponse(responseCode = "404", description = "No resources found for calendarId", content = @Content()),
+                @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public Long countWorkDays(@PathVariable(value = "id") Long id,
                               @RequestParam(value = "from") LocalDate from,
                               @RequestParam(value = "to") LocalDate to) {
@@ -108,34 +127,4 @@ public class WorkCalendarRestEndpoint {
         LOG.info("END - countWorkDays={}", workdays);
         return workdays;
     }
-
-    //holiday rest endpoints
-//    @GetMapping(path = "/{calendarId}/holiday")
-//    public List<HolidayDTO> getHolidaysForCalendar(@PathVariable("calendarId") Long calendarId) {
-//        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
-//
-//        List<HolidayDTO> result = holidayService.getHolidaysForCalendar(calendarId);
-//        if(result.isEmpty()) {
-//            LOG.error("No holiday objects found for calendarId={}", calendarId);
-//            throw new ResourceNotFoundException("No holiday objects found");
-//        }
-//
-//        LOG.info("END - getHolidaysForCalendar: {}", result);
-//        return result;
-//    }
-
-    //workweek rest endpoints
-//    @GetMapping(path = "/{calendarId}/workweek")
-//    public List<WorkweekDTO> getWorkweeksForCalendar(@PathVariable("calendarId") Long calendarId) {
-//        LOG.info("START - getWorkweeksForCalendar(calendarId={})", calendarId);
-//        List<WorkweekDTO> workweekDTOS = workweekService.getWorkweeksByCalendarId(calendarId);
-//
-//        if(workweekDTOS.isEmpty()) {
-//            LOG.error("No workweek objects found for calendarId={}", calendarId);
-//            throw new ResourceNotFoundException("No workweek objects found");
-//        }
-//
-//        LOG.info("END - getWorkweeksForCalendar: {}", workweekDTOS);
-//        return workweekDTOS;
-//    }
 }
