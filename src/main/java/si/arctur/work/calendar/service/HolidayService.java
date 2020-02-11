@@ -71,7 +71,7 @@ public class HolidayService {
             throw new IllegalArgumentException("id and calenadrId attribute must not be null!");
         }
 
-        return holidayConverter.convert(holidayRepository.getHolidayEntityByIdAndWorkCalendars(id, new WorkCalendarEntity(calendarId)));
+        return holidayConverter.convert(holidayRepository.getHolidayEntityByIdAndWorkClendarId(id, calendarId));
     }
 
     @Transactional
@@ -149,7 +149,7 @@ public class HolidayService {
             throw new IllegalArgumentException("HolidayDTO or calendarId attribute must not be null!");
         }
 
-        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkCalendars(holidayDTO.getId(), new WorkCalendarEntity(calendarId));
+        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkClendarId(holidayDTO.getId(), calendarId);
 
         holidayEntity.setWorkFree(holidayDTO.getWorkFree());
         holidayEntity.setName(holidayDTO.getName());
@@ -165,7 +165,7 @@ public class HolidayService {
      */
     @Transactional
     public void deleteHoliday(Long calendarId, Long holidayId) {
-        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkCalendars(holidayId, new WorkCalendarEntity(calendarId));
+        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkClendarId(holidayId, calendarId);
         int numOfCalendarReferences = holidayEntity.getWorkCalendars().size();
         LOG.info("numOfCalendarReferences={}", numOfCalendarReferences);
 

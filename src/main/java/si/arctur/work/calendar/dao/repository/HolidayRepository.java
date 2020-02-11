@@ -11,7 +11,9 @@ import java.util.Collection;
 
 public interface HolidayRepository extends JpaRepository<HolidayEntity, Long> {
 
-    HolidayEntity getHolidayEntityByIdAndWorkCalendars(Long id, WorkCalendarEntity workCalendarEntity);
+//    @Query(value = "SELECT h FROM holiday h LEFT JOIN work_calendar2holiday wc2h ON wc2h.holiday_id = h.id WHERE h.id = :id AND wc2h.work_calendar_id = :calendarId", nativeQuery = true)
+    @Query("SELECT h FROM HolidayEntity h JOIN FETCH h.workCalendars c WHERE h.id = :id AND c.id = :calendarId")
+    HolidayEntity getHolidayEntityByIdAndWorkClendarId(Long id, Long calendarId);
 
 //    Collection<HolidayEntity> getHolidayEntitiesByDateOrNameOrWorkFree(@Param("date") LocalDate date, @Param("name") String name, @Param("workFree") Boolean workFree);
 

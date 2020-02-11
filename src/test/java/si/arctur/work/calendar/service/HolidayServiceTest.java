@@ -92,7 +92,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHoliday_getOne() {
-        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendars(Mockito.anyLong(), Mockito.any(WorkCalendarEntity.class))).thenReturn(generateHolidayEntity(Long.valueOf(1)));
+        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkClendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(generateHolidayEntity(Long.valueOf(1)));
 
         HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
 
@@ -102,7 +102,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHoliday_getNull() {
-        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendars(Mockito.anyLong(), Mockito.any(WorkCalendarEntity.class))).thenReturn(null);
+        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkClendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(null);
 
         HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
 
