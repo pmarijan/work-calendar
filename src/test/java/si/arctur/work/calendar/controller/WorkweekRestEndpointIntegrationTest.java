@@ -1,15 +1,20 @@
 package si.arctur.work.calendar.controller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import si.arctur.work.calendar.model.WorkweekDTO;
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -19,6 +24,13 @@ public class WorkweekRestEndpointIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    private HttpHeaders headers = new HttpHeaders();
+
+    @Before
+    public void setUp() {
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    }
 
     @Test
     public void testGetWorkweeks() {
@@ -32,12 +44,18 @@ public class WorkweekRestEndpointIntegrationTest {
 
     @Test
     public void testAddWorkweek() {
-        WorkweekDTO workweekDTO = restTemplate.exchange("/workcalendar/1/workweek/", HttpMethod.POST, null, new ParameterizedTypeReference<WorkweekDTO>() {}).getBody();
+        WorkweekDTO workweekDTO = new WorkweekDTO();
+        HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
+
+        WorkweekDTO workweekDTOResponse = restTemplate.exchange("/workcalendar/1/workweek/", HttpMethod.POST, entity, new ParameterizedTypeReference<WorkweekDTO>() {}).getBody();
     }
 
     @Test
     public void testUpdateWorkweek() {
-        WorkweekDTO workweekDTO = restTemplate.exchange("/workcalendar/1/workweek/1", HttpMethod.PUT, null, new ParameterizedTypeReference<WorkweekDTO>() {}).getBody();
+        WorkweekDTO workweekDTO = new WorkweekDTO();
+        HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
+
+        WorkweekDTO workweekDTOResponse = restTemplate.exchange("/workcalendar/1/workweek/1", HttpMethod.PUT, null, new ParameterizedTypeReference<WorkweekDTO>() {}).getBody();
     }
 
     @Test

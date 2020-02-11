@@ -38,7 +38,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHolidays_getOne() {
-        Mockito.when(holidayRepository.getHolidayEntites(Long.valueOf(1), LocalDate.of(2020,2,8), null, null)).thenReturn(generateHolidayEntityList(1));
+        Mockito.when(holidayRepository.getHolidayEntities(Long.valueOf(1), LocalDate.of(2020,2,8), null, null)).thenReturn(generateHolidayEntityList(1));
 
         List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
@@ -48,7 +48,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHolidays_getTwo() {
-        Mockito.when(holidayRepository.getHolidayEntites(Long.valueOf(1), LocalDate.of(2020,2,8), null, null)).thenReturn(generateHolidayEntityList(2));
+        Mockito.when(holidayRepository.getHolidayEntities(Long.valueOf(1), LocalDate.of(2020,2,8), null, null)).thenReturn(generateHolidayEntityList(2));
 
         List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
@@ -74,7 +74,7 @@ public class HolidayServiceTest {
 //
 //    @Test
 //    public void testGetHolidaysForCalendar_getCollection() {
-//        Mockito.when(holidayRepository.getHolidayEntitiesByWorkCalendars(Mockito.anyLong())).thenReturn(generateHolidayEntityList(5));
+//        Mockito.when(holidayRepository.workdayOrHolidayCheckByWorkCalendars(Mockito.anyLong())).thenReturn(generateHolidayEntityList(5));
 //
 //        List<HolidayDTO> holidays = holidayService.getHolidaysForCalendar(Long.valueOf(1));
 //
@@ -92,7 +92,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHoliday_getOne() {
-        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkClendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(generateHolidayEntity(Long.valueOf(1)));
+        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(generateHolidayEntity(Long.valueOf(1)));
 
         HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
 
@@ -102,7 +102,7 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHoliday_getNull() {
-        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkClendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(null);
+        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(null);
 
         HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
 

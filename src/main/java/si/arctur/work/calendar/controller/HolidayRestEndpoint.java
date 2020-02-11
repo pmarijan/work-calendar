@@ -1,5 +1,8 @@
 package si.arctur.work.calendar.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,11 @@ public class HolidayRestEndpoint {
      * @return
      */
     @GetMapping
+    @Operation(summary = "Get list of holidays", description = "Get list of holidays for selected calendar filtered by holiday name, date and isWorkFree.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of holidays returned"),
+                    @ApiResponse(responseCode = "404", description = "No holidays found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public List<HolidayDTO> getHolidays(@PathVariable("calendarId") Long calendarId,
                                         @RequestParam(value = "name", required = false) String name,
                                         @RequestParam(value = "date", required = false) LocalDate date,
@@ -55,6 +63,11 @@ public class HolidayRestEndpoint {
      * @return
      */
     @GetMapping(path = "/{holidayId}")
+    @Operation(summary = "Get holiday", description = "Get holiday for selected calendarId.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Holiday returned"),
+                    @ApiResponse(responseCode = "404", description = "Holiday not found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public HolidayDTO getHoliday(@PathVariable("calendarId") Long calendarId,
                                  @PathVariable("holidayId") Long holidayId) {
         LOG.info("START - getHoliday(calendarId={}, holidayId={})", calendarId, holidayId);
@@ -69,6 +82,11 @@ public class HolidayRestEndpoint {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Add new holiday", description = "Add new holiday to selected calendar.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Holiday successfully added"),
+                    @ApiResponse(responseCode = "404", description = "Calendar not found to add new holiday", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public HolidayDTO addHoliday(@PathVariable("calendarId") Long calendarId,
                                  @Valid @NotNull @RequestBody HolidayDTO holidayDTO) {
         LOG.info("START - addHoliday(calendarId={}, holidayDTO={})", calendarId, holidayDTO);
@@ -77,6 +95,11 @@ public class HolidayRestEndpoint {
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update existing holiday", description = "Update existing holiday for selected calendar.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Holiday successfully updated"),
+                    @ApiResponse(responseCode = "404", description = "Calendar or holiday not found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public HolidayDTO updateHoliday(@PathVariable("calendarId") Long calendarId,
                                     @PathVariable("id") Long id,
                                     @NotNull @Valid @RequestBody HolidayDTO holidayDTO) {
@@ -97,6 +120,11 @@ public class HolidayRestEndpoint {
      */
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete holiday", description = "Delete holiday for selected calendar.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Holiday successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "Calendar or holiday not found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public void deleteHoliday(@PathVariable("calendarId") Long calendarId,
                               @PathVariable("id") Long id) {
         LOG.info("START - deleteHoliday(calendarId={}, id={})", calendarId, id);

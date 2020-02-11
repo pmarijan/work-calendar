@@ -1,5 +1,8 @@
 package si.arctur.work.calendar.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,11 @@ public class WorkweekRestEndpoint {
     private WorkweekService workweekService;
 
     @GetMapping
+    @Operation(summary = "Get list of workweeks", description = "Get list of workweeks for selected calendar filtered by workweek description and weekNumber.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of workweeks returned"),
+                    @ApiResponse(responseCode = "404", description = "No workweeks found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public List<WorkweekDTO> getWorkweeks(@PathVariable("calendarId") Long calendarId,
                                           @RequestParam(value = "description", required = false) String description,
                                           @RequestParam(value = "weekNumber", required = false) Integer weekNumber) {
@@ -39,6 +47,11 @@ public class WorkweekRestEndpoint {
     }
 
     @GetMapping(path = "/{workweekId}")
+    @Operation(summary = "Get workweek", description = "Get workweek for selected calendarId.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Workweek returned"),
+                    @ApiResponse(responseCode = "404", description = "Workweek not found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public WorkweekDTO getWorkweek(@PathVariable("calendarId") Long calendarId,
                                    @PathVariable("workweekId") Long workweekId) {
         LOG.info("START - getWorkweek(calendarId={}, workweekId={})", calendarId, workweekId);
@@ -54,6 +67,11 @@ public class WorkweekRestEndpoint {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Add new workweek", description = "Add new workweek to selected calendar.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Workweek successfully added"),
+                    @ApiResponse(responseCode = "404", description = "Calendar not found to add new workweek", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public WorkweekDTO addWorkweek(@PathVariable("calendarId") Long calendarId,
                                    @Valid @NotNull@RequestBody WorkweekDTO workweekDTO) {
         LOG.info("START - addWorkweek(calendarId={}, workweekDTO={})", calendarId, workweekDTO);
@@ -61,6 +79,11 @@ public class WorkweekRestEndpoint {
     }
 
     @PutMapping(path = "/{workweekId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update existing workweek", description = "Update existing workweek for selected calendar.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Workweek successfully updated"),
+                    @ApiResponse(responseCode = "404", description = "Calendar or workweek not found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public WorkweekDTO updateWorkweek(@PathVariable("calendarId") Long calendarId,
                                       @PathVariable("workweekId") Long workweekId,
                                       @Valid @NotNull @RequestBody WorkweekDTO workweekDTO) {
@@ -81,6 +104,11 @@ public class WorkweekRestEndpoint {
      */
     @DeleteMapping(path = "/{workweekId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete workweek", description = "Delete workweek for selected calendar.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Workweek successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "Calendar or workweek not found", content = @Content()),
+                    @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public void deleteWorkweek(@PathVariable("calendarId") Long calendarId,
                                @PathVariable("workweekId") Long workweekId) {
         LOG.info("START - deleteWorkweek(calendarId={}, workweekId={})", calendarId, workweekId);

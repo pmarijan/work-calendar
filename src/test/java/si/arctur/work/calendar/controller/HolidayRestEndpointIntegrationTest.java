@@ -1,18 +1,17 @@
 package si.arctur.work.calendar.controller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import si.arctur.work.calendar.model.HolidayDTO;
-import si.arctur.work.calendar.model.WorkCalendarDTO;
-
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -22,6 +21,13 @@ public class HolidayRestEndpointIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    private HttpHeaders headers = new HttpHeaders();
+
+    @Before
+    public void setUp() {
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    }
 
     @Test
     public void testGetHolidays() {
@@ -35,12 +41,18 @@ public class HolidayRestEndpointIntegrationTest {
 
     @Test
     public void testAddHoliday(){
-        ResponseEntity<HolidayDTO> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/", HttpMethod.POST, null, new ParameterizedTypeReference<HolidayDTO>() {});
+        HolidayDTO holidayDTO = new HolidayDTO();
+        HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
+
+        ResponseEntity<HolidayDTO> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/", HttpMethod.POST, entity, new ParameterizedTypeReference<HolidayDTO>() {});
     }
 
     @Test
     public void testUpdateHoliday(){
-        ResponseEntity<HolidayDTO> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/1", HttpMethod.PUT, null, new ParameterizedTypeReference<HolidayDTO>() {});
+        HolidayDTO holidayDTO = new HolidayDTO();
+        HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
+
+        ResponseEntity<HolidayDTO> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/1", HttpMethod.PUT, entity, new ParameterizedTypeReference<HolidayDTO>() {});
     }
 
     @Test

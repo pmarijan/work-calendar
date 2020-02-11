@@ -24,7 +24,7 @@ public class HolidayRepositoryTest {
 
     @Test
     public void testGetHolidayEntityById_getOne() {
-        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkClendarId(Long.valueOf(1), Long.valueOf(1));
+        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Long.valueOf(1), Long.valueOf(1));
 
         Assert.assertNotNull(holidayEntityResult);
         Assert.assertEquals("Novo leto", holidayEntityResult.getName());
@@ -32,30 +32,30 @@ public class HolidayRepositoryTest {
 
     @Test
     public void testGetHolidayEntityById_getNull() {
-        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkClendarId(Long.MAX_VALUE, Long.valueOf(1));
+        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Long.MAX_VALUE, Long.valueOf(1));
 
         Assert.assertNull(holidayEntityResult);
     }
 
 //    @Test
-//    public void testGetHolidayEntitiesByWorkCalendars_getEmptyCollection() {
-//        Collection<HolidayEntity> holidays = holidayRepository.getHolidayEntitiesByWorkCalendars(Long.MAX_VALUE);
+//    public void testworkdayOrHolidayCheckByWorkCalendars_getEmptyCollection() {
+//        Collection<HolidayEntity> holidays = holidayRepository.workdayOrHolidayCheckByWorkCalendars(Long.MAX_VALUE);
 //
 //        Assert.assertNotNull(holidays);
 //        Assert.assertTrue(holidays.isEmpty());
 //    }
 //
 //    @Test
-//    public void testGetHolidayEntitiesByWorkCalendars_getEmptyCollectionForNullInput() {
-//        Collection<HolidayEntity> holidays = holidayRepository.getHolidayEntitiesByWorkCalendars(null);
+//    public void testworkdayOrHolidayCheckByWorkCalendars_getEmptyCollectionForNullInput() {
+//        Collection<HolidayEntity> holidays = holidayRepository.workdayOrHolidayCheckByWorkCalendars(null);
 //
 //        Assert.assertNotNull(holidays);
 //        Assert.assertTrue(holidays.isEmpty());
 //    }
 //
 //    @Test
-//    public void testGetHolidayEntitiesByWorkCalendars_getNotEmptyCollection() {
-//        Collection<HolidayEntity> holidays = holidayRepository.getHolidayEntitiesByWorkCalendars(Long.valueOf(1));
+//    public void testworkdayOrHolidayCheckByWorkCalendars_getNotEmptyCollection() {
+//        Collection<HolidayEntity> holidays = holidayRepository.workdayOrHolidayCheckByWorkCalendars(Long.valueOf(1));
 //
 //        Assert.assertNotNull(holidays);
 //        Assert.assertFalse(holidays.isEmpty());
