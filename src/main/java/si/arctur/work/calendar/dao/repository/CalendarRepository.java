@@ -11,6 +11,4 @@ import java.util.Collection;
 public interface CalendarRepository extends JpaRepository<WorkCalendarEntity, Long> {
 
     WorkCalendarEntity getWorkCalendarEntityById(@Param("id") Long id);
-
-//    Collection<WorkCalendarEntity> getWorkCalendarEntitiesByDescriptionOrNameOrWorkdaysOrYear(@Param("description") String description, @Param("name") String name, @Param("workDays") String workDays, @Param("year") Integer year);
 }

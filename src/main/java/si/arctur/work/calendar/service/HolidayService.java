@@ -1,12 +1,9 @@
 package si.arctur.work.calendar.service;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import si.arctur.work.calendar.converter.HolidayConverter;
 import si.arctur.work.calendar.dao.entity.HolidayEntity;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
@@ -14,8 +11,6 @@ import si.arctur.work.calendar.dao.repository.CalendarRepository;
 import si.arctur.work.calendar.dao.repository.HolidayRepository;
 import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.HolidayDTO;
-import si.arctur.work.calendar.model.WorkCalendarDTO;
-
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
@@ -34,31 +29,18 @@ public class HolidayService {
     @Autowired
     private HolidayConverter holidayConverter;
 
+    /**
+     *
+     * @param calendarId
+     * @param date
+     * @param name
+     * @param isWorkFree
+     * @return
+     */
     public List<HolidayDTO> getHolidays(Long calendarId, LocalDate date, String name, Boolean isWorkFree) {
         LOG.info("START - getHolidays(calendarId={}, date={}, name={}, isWorkFree={})", calendarId, date, name, isWorkFree);
 
-        HolidayEntity holidayEntity = new HolidayEntity();
-        holidayEntity.setDate(date);
-        holidayEntity.setName(name);
-        holidayEntity.setWorkFree(isWorkFree);
-        if(Objects.nonNull(calendarId)) {
-            holidayEntity.setWorkCalendars(Arrays.asList(new WorkCalendarEntity(calendarId)));
-        }
-
-        return holidayRepository.findAll(Example.of(holidayEntity)).stream()
-                .map(holiday -> holidayConverter.convert(holiday))
-                .collect(Collectors.toList());
-    }
-
-    public List<HolidayDTO> getHolidaysForCalendar(Long calendarId) {
-        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
-
-        if(Objects.isNull(calendarId)) {
-            LOG.error("calendarId attribute must not be null!");
-            throw new IllegalArgumentException("calendarId attribute must not be null!");
-        }
-
-        return holidayRepository.getHolidayEntitiesByWorkCalendars(new WorkCalendarEntity(calendarId)).stream()
+        return holidayRepository.getHolidayEntities(calendarId, date, name, isWorkFree).stream()
                 .map(holiday -> holidayConverter.convert(holiday))
                 .collect(Collectors.toList());
     }
@@ -71,7 +53,7 @@ public class HolidayService {
             throw new IllegalArgumentException("id and calenadrId attribute must not be null!");
         }
 
-        return holidayConverter.convert(holidayRepository.getHolidayEntityByIdAndWorkClendarId(id, calendarId));
+        return holidayConverter.convert(holidayRepository.getHolidayEntityByIdAndWorkCalendarId(id, calendarId));
     }
 
     @Transactional
@@ -115,27 +97,6 @@ public class HolidayService {
     }
 
     /**
-     * Add new holiday without adding reference to work calendar
-     * @param holidayDTO
-     * @return
-     */
-//    public HolidayDTO addHoliday(HolidayDTO holidayDTO) {
-//        LOG.info("START - addHoliday(holidayDTO={})", holidayDTO);
-//
-//        if(Objects.isNull(holidayDTO)) {
-//            LOG.error("holidayDTO attribute must not be null!");
-//            throw new IllegalArgumentException("holidayDTO attribute must not be null!");
-//        }
-//
-//        HolidayEntity holidayEntity = new HolidayEntity();
-//        holidayEntity.setDate(holidayDTO.getDate());
-//        holidayEntity.setName(holidayDTO.getName());
-//        holidayEntity.setWorkFree(holidayDTO.getWorkFree());
-//
-//        return holidayConverter.convert(holidayRepository.save(holidayEntity));
-//    }
-
-    /**
      * Update selected holiday, without changing reference to work calendar
      * @param holidayDTO
      * @return
@@ -149,7 +110,7 @@ public class HolidayService {
             throw new IllegalArgumentException("HolidayDTO or calendarId attribute must not be null!");
         }
 
-        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkClendarId(holidayDTO.getId(), calendarId);
+        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(holidayDTO.getId(), calendarId);
 
         holidayEntity.setWorkFree(holidayDTO.getWorkFree());
         holidayEntity.setName(holidayDTO.getName());
@@ -165,7 +126,7 @@ public class HolidayService {
      */
     @Transactional
     public void deleteHoliday(Long calendarId, Long holidayId) {
-        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkClendarId(holidayId, calendarId);
+        HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(holidayId, calendarId);
         int numOfCalendarReferences = holidayEntity.getWorkCalendars().size();
         LOG.info("numOfCalendarReferences={}", numOfCalendarReferences);
 
@@ -174,7 +135,6 @@ public class HolidayService {
                 .findAny().isPresent()) {
             throw new IllegalArgumentException("Workcalendar id mismatch!");
         }
-//                .orElseThrow(() -> {throw new IllegalArgumentException("Workcalendar id mismatch!");});
 
         //delete mapping if exists
         holidayRepository.deleteHolidayToWorkCalendarMapping(calendarId, holidayId);
