@@ -39,6 +39,7 @@ public class HolidayRestEndpoint {
     @Operation(summary = "Get list of holidays", description = "Get list of holidays for selected calendar filtered by holiday name, date and isWorkFree.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of holidays returned"),
+                    @ApiResponse(responseCode = "400", description = "Bad input data", content = @Content()),
                     @ApiResponse(responseCode = "404", description = "No holidays found", content = @Content()),
                     @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public List<HolidayDTO> getHolidays(@PathVariable("calendarId") Long calendarId,

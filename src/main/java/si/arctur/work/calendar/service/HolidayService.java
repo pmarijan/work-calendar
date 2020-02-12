@@ -126,11 +126,18 @@ public class HolidayService {
      */
     @Transactional
     public void deleteHoliday(Long calendarId, Long holidayId) {
+        LOG.info("START - deleteHoliday(calendarId={}, holidayId={})", calendarId, holidayId);
+
         HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(holidayId, calendarId);
+        if(Objects.isNull(holidayEntity)) {
+            LOG.error("Holiday resource not found for holidayId={}!", holidayId);
+            throw new ResourceNotFoundException("Holiday resoutce not found!");
+        }
+
         int numOfCalendarReferences = holidayEntity.getWorkCalendars().size();
         LOG.info("numOfCalendarReferences={}", numOfCalendarReferences);
 
-        if(holidayEntity.getWorkCalendars().stream()
+        if(!holidayEntity.getWorkCalendars().stream()
                 .filter(c -> c.getId().equals(calendarId))
                 .findAny().isPresent()) {
             throw new IllegalArgumentException("Workcalendar id mismatch!");
@@ -141,23 +148,23 @@ public class HolidayService {
 
         //if there is no more references to work calendar, delete holiday
         if(numOfCalendarReferences == 1) {
-            deleteHoliday(holidayId);
+            deleteHoliday(holidayEntity);
         }
     }
 
     /**
      * Delete holiday record only if it does not have mapping to work calendar
-     * @param id
+     * @param holidayEntity
      */
     @Transactional
-    public void deleteHoliday(Long id) {
-        LOG.info("START - deleteHoliday(id={})", id);
+    public void deleteHoliday(HolidayEntity holidayEntity) {
+        LOG.info("START - deleteHoliday(holidayEntity={})", holidayEntity);
 
-        if(Objects.isNull(id)) {
-            LOG.error("id attribute must not be null!");
-            throw new IllegalArgumentException("id attribute must not be null!");
+        if(Objects.isNull(holidayEntity)) {
+            LOG.error("holidayEntity attribute must not be null!");
+            throw new IllegalArgumentException("holidayEntity attribute must not be null!");
         }
 
-        holidayRepository.delete(new HolidayEntity(id));
+        holidayRepository.delete(holidayEntity);
     }
 }
