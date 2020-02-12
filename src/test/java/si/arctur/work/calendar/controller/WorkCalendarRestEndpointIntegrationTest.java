@@ -46,6 +46,12 @@ public class WorkCalendarRestEndpointIntegrationTest {
         Assert.assertNotNull(calendarDTOList);
         Assert.assertFalse(calendarDTOList.isEmpty());
         Assert.assertTrue(calendarDTOList.size() == 1);
+
+        WorkCalendarDTO calendarDTO = calendarDTOList.get(0);
+        Assert.assertEquals("Some test description for Test Work Calendar 2020", calendarDTO.getDescription());
+        Assert.assertEquals("Test Work Calendar 2020", calendarDTO.getName());
+        Assert.assertTrue(2020 ==calendarDTO.getYear());
+        Assert.assertTrue(5 == calendarDTO.getWorkdays().size());
     }
 
     @Test
@@ -82,6 +88,12 @@ public class WorkCalendarRestEndpointIntegrationTest {
 
         Assert.assertNotNull(workCalendarDTO);
         Assert.assertFalse(workCalendarDTO.getWorkdays().isEmpty());
+
+        Assert.assertTrue(1 == workCalendarDTO.getId());
+        Assert.assertEquals("Some test description for Test Work Calendar 2020", workCalendarDTO.getDescription());
+        Assert.assertEquals("Test Work Calendar 2020", workCalendarDTO.getName());
+        Assert.assertTrue(2020 ==workCalendarDTO.getYear());
+        Assert.assertTrue(5 == workCalendarDTO.getWorkdays().size());
     }
 
     @Test
@@ -155,4 +167,11 @@ public class WorkCalendarRestEndpointIntegrationTest {
         Assert.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
+    @Test
+    public void testGetListOfDays_get400() {
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/999/day?from=WRONG_DATE_FORMAT&to=2020-01-31", HttpMethod.GET, null, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
 }

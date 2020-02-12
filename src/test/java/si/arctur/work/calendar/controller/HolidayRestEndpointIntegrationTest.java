@@ -1,6 +1,7 @@
 package si.arctur.work.calendar.controller;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,19 @@ public class HolidayRestEndpointIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testGetHolidays() {
         ResponseEntity<List<HolidayDTO>> responseEntity = restTemplate.exchange("/workcalendar/1/holiday", HttpMethod.GET, null, new ParameterizedTypeReference<List<HolidayDTO>>() {});
     }
 
     @Test
+    @Ignore
     public void testGetHoliday() {
         ResponseEntity<HolidayDTO> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/1", HttpMethod.GET, null, new ParameterizedTypeReference<HolidayDTO>() {});
     }
 
     @Test
+    @Ignore
     public void testAddHoliday(){
         HolidayDTO holidayDTO = new HolidayDTO();
         HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
@@ -48,6 +52,7 @@ public class HolidayRestEndpointIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testUpdateHoliday(){
         HolidayDTO holidayDTO = new HolidayDTO();
         HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
@@ -56,6 +61,7 @@ public class HolidayRestEndpointIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testDeleteHoliday(){
         String result = restTemplate.exchange("/workcalendar/1/holiday/1", HttpMethod.DELETE, null, String.class).getBody();
     }

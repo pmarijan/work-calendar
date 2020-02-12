@@ -1,6 +1,7 @@
 package si.arctur.work.calendar.controller;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +34,19 @@ public class WorkweekRestEndpointIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testGetWorkweeks() {
         List<WorkweekDTO> workweekDTOList = restTemplate.exchange("/workcalendar/1/workweek", HttpMethod.GET, null, new ParameterizedTypeReference<List<WorkweekDTO>>() {}).getBody();
     }
 
     @Test
+    @Ignore
     public void testGetWorkweek() {
         WorkweekDTO workweekDTO = restTemplate.exchange("/workcalendar/1/workweek/1", HttpMethod.GET, null, new ParameterizedTypeReference<WorkweekDTO>() {}).getBody();
     }
 
     @Test
+    @Ignore
     public void testAddWorkweek() {
         WorkweekDTO workweekDTO = new WorkweekDTO();
         HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
@@ -51,6 +55,7 @@ public class WorkweekRestEndpointIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testUpdateWorkweek() {
         WorkweekDTO workweekDTO = new WorkweekDTO();
         HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
@@ -59,6 +64,7 @@ public class WorkweekRestEndpointIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testDeleteWorkweek() {
         String response = restTemplate.exchange("/workcalendar/1/workweek/1", HttpMethod.DELETE, null, String.class).getBody();
     }
