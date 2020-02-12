@@ -108,34 +108,4 @@ public class WorkCalendarRestEndpoint {
         LOG.info("END - countWorkDays={}", workdays);
         return workdays;
     }
-
-    //holiday rest endpoints
-//    @GetMapping(path = "/{calendarId}/holiday")
-//    public List<HolidayDTO> getHolidaysForCalendar(@PathVariable("calendarId") Long calendarId) {
-//        LOG.info("START - getHolidaysForCalendar(calendarId={})", calendarId);
-//
-//        List<HolidayDTO> result = holidayService.getHolidaysForCalendar(calendarId);
-//        if(result.isEmpty()) {
-//            LOG.error("No holiday objects found for calendarId={}", calendarId);
-//            throw new ResourceNotFoundException("No holiday objects found");
-//        }
-//
-//        LOG.info("END - getHolidaysForCalendar: {}", result);
-//        return result;
-//    }
-
-    //workweek rest endpoints
-//    @GetMapping(path = "/{calendarId}/workweek")
-//    public List<WorkweekDTO> getWorkweeksForCalendar(@PathVariable("calendarId") Long calendarId) {
-//        LOG.info("START - getWorkweeksForCalendar(calendarId={})", calendarId);
-//        List<WorkweekDTO> workweekDTOS = workweekService.getWorkweeksByCalendarId(calendarId);
-//
-//        if(workweekDTOS.isEmpty()) {
-//            LOG.error("No workweek objects found for calendarId={}", calendarId);
-//            throw new ResourceNotFoundException("No workweek objects found");
-//        }
-//
-//        LOG.info("END - getWorkweeksForCalendar: {}", workweekDTOS);
-//        return workweekDTOS;
-//    }
 }

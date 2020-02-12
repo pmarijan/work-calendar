@@ -1,5 +1,6 @@
 --insert sample data for work calendar
 INSERT INTO `work_calendar`(`id`,`name`,`description`,`workdays`,`year`) VALUES(1, 'Test Work Calendar 2020', 'Some test description for Test Work Calendar 2020', 'MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY', 2020);
+INSERT INTO `work_calendar`(`id`,`name`,`description`,`workdays`,`year`) VALUES(2, 'Test Work Calendar 2021', 'Some test description for Test Work Calendar 2021', 'MONDAY,TUESDAY,WEDNESDAY,THURSDAY', 2021);
 
 INSERT INTO `holiday`(`id`, `name`, `date`, `work_free`) VALUES(1, 'Novo leto', '2020-01-01', true);
 INSERT INTO `holiday`(`id`, `name`, `date`, `work_free`) VALUES(2, 'Novo leto', '2020-01-02', true);
