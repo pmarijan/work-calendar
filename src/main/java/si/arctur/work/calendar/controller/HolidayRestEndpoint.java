@@ -95,22 +95,24 @@ public class HolidayRestEndpoint {
         return holidayService.addHolidayToCalendar(calendarId, holidayDTO);
     }
 
-    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{holidayId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update existing holiday", description = "Update existing holiday for selected calendar.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Holiday successfully updated"),
                     @ApiResponse(responseCode = "404", description = "Calendar or holiday not found", content = @Content()),
                     @ApiResponse(responseCode = "500", description = "Something went wrong or invalid data was provided", content = @Content())})
     public HolidayDTO updateHoliday(@PathVariable("calendarId") Long calendarId,
-                                    @PathVariable("id") Long id,
+                                    @PathVariable("holidayId") Long holidayId,
                                     @NotNull @Valid @RequestBody HolidayDTO holidayDTO) {
-        LOG.info("START - updateHoliday(calendarId={}, id={}, holidayDTO={})", calendarId, id, holidayDTO);
+        LOG.info("START - updateHoliday(calendarId={}, holidayId={}, holidayDTO={})", calendarId, holidayId, holidayDTO);
 
+        //set id from path to holiday object
+        holidayDTO.setId(holidayId);
         //check if ids match
-        if(id != holidayDTO.getId()) {
-            LOG.error("Provided path id={} and holidayDTO.id={} do not match!", id, holidayDTO.getId());
-            throw new IllegalArgumentException("Provided path id and holidayDTO.id do not match!");
-        }
+//        if(holidayId != holidayDTO.getId()) {
+//            LOG.error("Provided path holidayId={} and holidayDTO.holidayId={} do not match!", holidayId, holidayDTO.getId());
+//            throw new IllegalArgumentException("Provided path id and holidayDTO.id do not match!");
+//        }
 
         return holidayService.updateHoliday(calendarId, holidayDTO);
     }

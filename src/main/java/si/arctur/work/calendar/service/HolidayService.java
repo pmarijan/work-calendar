@@ -111,6 +111,10 @@ public class HolidayService {
         }
 
         HolidayEntity holidayEntity = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(holidayDTO.getId(), calendarId);
+        if(Objects.isNull(holidayEntity)) {
+            LOG.error("Holiday resource not found for holidayId={}!", holidayDTO.getId());
+            throw new ResourceNotFoundException("Holiday resource not found!");
+        }
 
         holidayEntity.setWorkFree(holidayDTO.getWorkFree());
         holidayEntity.setName(holidayDTO.getName());

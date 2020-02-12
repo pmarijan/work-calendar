@@ -232,11 +232,82 @@ public class HolidayRestEndpointIntegrationTest {
     }
 
     @Test
-    @Ignore
-    public void testUpdateHoliday(){
+    public void testUpdateHoliday_get200(){
+        //get old value to compare later
+        HolidayDTO holidayDTOBeforeUpdate = restTemplate.exchange("/workcalendar/1/holiday/1", HttpMethod.GET, null, new ParameterizedTypeReference<HolidayDTO>() {}).getBody();
+
         HolidayDTO holidayDTO = new HolidayDTO();
+        holidayDTO.setDate(LocalDate.of(2020, 12, 19));
+        holidayDTO.setName("My holiday");
+        holidayDTO.setWorkFree(false);
+
         HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
 
         ResponseEntity<HolidayDTO> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/1", HttpMethod.PUT, entity, new ParameterizedTypeReference<HolidayDTO>() {});
+
+        HolidayDTO holidayDTOResponse = responseEntity.getBody();
+
+        Assert.assertNotNull(responseEntity);
+
+        //search for new data to compare with previous
+        HolidayDTO updatedHolidayDTO = restTemplate.exchange("/workcalendar/1/holiday/1", HttpMethod.GET, null, new ParameterizedTypeReference<HolidayDTO>() {}).getBody();
+
+        //input should be equal to retrieved object
+        Assert.assertEquals(holidayDTO.getName(), updatedHolidayDTO.getName());
+        Assert.assertEquals(holidayDTO.getDate(), updatedHolidayDTO.getDate());
+        Assert.assertEquals(holidayDTO.getWorkFree(), updatedHolidayDTO.getWorkFree());
+
+        //input should be different from old one
+        Assert.assertNotEquals(holidayDTO.getName(), holidayDTOBeforeUpdate.getName());
+        Assert.assertNotEquals(holidayDTO.getWorkFree(), holidayDTOBeforeUpdate.getWorkFree());
+        Assert.assertNotEquals(holidayDTO.getDate(), holidayDTOBeforeUpdate.getDate());
+
+        //number of calendars must be same after update
+        Assert.assertEquals(updatedHolidayDTO.getWorkCalendars().size(), holidayDTOBeforeUpdate.getWorkCalendars().size());
+    }
+
+    @Test
+    public void testUpdateHoliday_get404QueryByCalendar() {
+        HolidayDTO holidayDTO = new HolidayDTO();
+        holidayDTO.setDate(LocalDate.of(2020, 12, 19));
+        holidayDTO.setName("My holiday");
+        holidayDTO.setWorkFree(false);
+
+        HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/434343/holiday/1", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateHoliday_get404QueryByHoliday() {
+        HolidayDTO holidayDTO = new HolidayDTO();
+        holidayDTO.setDate(LocalDate.of(2020, 12, 19));
+        holidayDTO.setName("My holiday");
+        holidayDTO.setWorkFree(false);
+
+        HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/175654654", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateHoliday_get400QueryByHoliday() {
+        HolidayDTO holidayDTO = new HolidayDTO();
+        holidayDTO.setDate(LocalDate.of(2020, 12, 19));
+        holidayDTO.setName("My holiday");
+        holidayDTO.setWorkFree(false);
+
+        HttpEntity<HolidayDTO> entity = new HttpEntity<>(holidayDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/1/holiday/null", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 }
