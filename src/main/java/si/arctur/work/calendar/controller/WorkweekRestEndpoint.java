@@ -94,6 +94,7 @@ public class WorkweekRestEndpoint {
             LOG.error("Provided path workweekId={} and workweekDTO object workweekId={} do not match!", workweekId, workweekDTO.getId());
             throw new IllegalArgumentException("Provided path workweekId and workweekDTO.workweekId do not match!");
         }
+        workweekDTO.setId(workweekId);
 
         return workweekService.updateWorkweek(calendarId, workweekDTO);
     }

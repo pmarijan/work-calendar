@@ -106,13 +106,12 @@ public class HolidayRestEndpoint {
                                     @NotNull @Valid @RequestBody HolidayDTO holidayDTO) {
         LOG.info("START - updateHoliday(calendarId={}, holidayId={}, holidayDTO={})", calendarId, holidayId, holidayDTO);
 
-        //set id from path to holiday object
-        holidayDTO.setId(holidayId);
         //check if ids match
-//        if(holidayId != holidayDTO.getId()) {
-//            LOG.error("Provided path holidayId={} and holidayDTO.holidayId={} do not match!", holidayId, holidayDTO.getId());
-//            throw new IllegalArgumentException("Provided path id and holidayDTO.id do not match!");
-//        }
+        if(Objects.nonNull(holidayDTO.getId()) && (holidayId != holidayDTO.getId())) {
+            LOG.error("Provided path holidayId={} and holidayDTO.holidayId={} do not match!", holidayId, holidayDTO.getId());
+            throw new IllegalArgumentException("Provided path id and holidayDTO.id do not match!");
+        }
+        holidayDTO.setId(holidayId);
 
         return holidayService.updateHoliday(calendarId, holidayDTO);
     }
