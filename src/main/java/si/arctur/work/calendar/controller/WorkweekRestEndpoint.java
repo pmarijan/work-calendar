@@ -89,8 +89,8 @@ public class WorkweekRestEndpoint {
                                       @Valid @NotNull @RequestBody WorkweekDTO workweekDTO) {
         LOG.info("START - updateWorkweek(calendarId={}, workweekId={}, workweekDTO={})", calendarId, workweekId, workweekDTO);
 
-        //check if ids match, otherwise it might be something wrong with input data
-        if(workweekId != workweekDTO.getId()) {
+        //if id is provided check if ids match, otherwise it might be something wrong with input data
+        if(Objects.nonNull(workweekDTO.getId()) && (workweekId != workweekDTO.getId())) {
             LOG.error("Provided path calendarId={} and workweekDTO object workweekId={} do not match!", workweekId, workweekDTO.getId());
             throw new IllegalArgumentException("Provided path calendarId and workweekDTO.workweekId do not match!");
         }
