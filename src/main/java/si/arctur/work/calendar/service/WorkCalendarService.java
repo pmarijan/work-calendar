@@ -84,12 +84,12 @@ public class WorkCalendarService {
         //convert collection to map for easier date search
         Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(h -> h.getDate(), h -> h));
 
+		//convert comma delimited string to set of workdays from work calendar
+		Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
+
         //function check if date is weekend or holiday
         Function<LocalDate, Boolean> isWorkday = (LocalDate date) -> {
             Boolean result = false;
-
-            //convert comma delimited string to set of workdays from work calendar
-			Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
 
             //day is working day if it's not weekend and if it's not a workfree holiday
             if(workdays.contains(date.getDayOfWeek())) {
@@ -123,13 +123,15 @@ public class WorkCalendarService {
 		//convert collection to map for easier date search
 		Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(h -> h.getDate(), h -> h));
 
+		//convert comma delimited string of day names to set
+		Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
+
 		//function check if date is weekend or holiday
 		Function<LocalDate, DayDTO> workdayOrHolidayCheck = (LocalDate date) -> {
 			DayDTO day = new DayDTO();
 			day.setDate(date);
 			day.setDayOfWeek(date.getDayOfWeek().name());
 
-			Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
 			//check if date is weekend or not, which day is weekend or workday is specified in WorkCalendar.workdays
 			day.setWeekend(!workdays.contains(date.getDayOfWeek()));
 
