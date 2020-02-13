@@ -257,6 +257,21 @@ public class WorkweekRestEndpointIntegrationTest {
     }
 
     @Test
+    public void testUpdateWorkweek_get500WorkweekIdMismatch() {
+        WorkweekDTO workweekDTO = new WorkweekDTO();
+        workweekDTO.setId(767676);
+        workweekDTO.setDescription("My workweek X");
+        workweekDTO.setWeekNumber(50);
+
+        HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/1/workweek/1", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
     public void testUpdateWorkweek_get404QueryByCalendarId() {
         WorkweekDTO workweekDTO = new WorkweekDTO();
         workweekDTO.setId(1);
@@ -269,5 +284,61 @@ public class WorkweekRestEndpointIntegrationTest {
 
         Assert.assertNotNull(responseEntity);
         Assert.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateWorkweek_get404QueryByWorkweekId() {
+        WorkweekDTO workweekDTO = new WorkweekDTO();
+        workweekDTO.setId(1);
+        workweekDTO.setDescription("My workweek X");
+        workweekDTO.setWeekNumber(50);
+
+        HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/1/workweek/53452345", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateWorkweek_get400BadBody() {
+        WorkweekDTO workweekDTO = new WorkweekDTO();
+        HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/1/workweek/53452345", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateWorkweek_get400QueryByCalendarId() {
+        WorkweekDTO workweekDTO = new WorkweekDTO();
+        workweekDTO.setId(1);
+        workweekDTO.setDescription("My workweek X");
+        workweekDTO.setWeekNumber(50);
+
+        HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/BadId/workweek/1", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateWorkweek_get400QueryByWorkweekId() {
+        WorkweekDTO workweekDTO = new WorkweekDTO();
+        workweekDTO.setId(1);
+        workweekDTO.setDescription("My workweek X");
+        workweekDTO.setWeekNumber(50);
+
+        HttpEntity<WorkweekDTO> entity = new HttpEntity<>(workweekDTO, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/workcalendar/1/workweek/BadWorkweekId", HttpMethod.PUT, entity, new ParameterizedTypeReference<String>() {});
+
+        Assert.assertNotNull(responseEntity);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 }
