@@ -80,8 +80,8 @@ public class WorkweekService {
 
         WorkweekEntity workweekEntity = workweekRepository.getWorkweekEntityByIdAndWorkCalendar(workweekDTO.getId(), new WorkCalendarEntity(calendarId));
         if(Objects.isNull(workweekEntity)) {
-            LOG.error("workweek object with calendarId={} and id={} does not exist!", calendarId, workweekDTO.getId());
-            throw new ResourceNotFoundException("workcalendar object does not exist!");
+            LOG.error("workweek object with calendarId={} and workweekDTO.id={} does not exist!", calendarId, workweekDTO.getId());
+            throw new ResourceNotFoundException("workweek object does not exist!");
         }
 
         workweekEntity.setDescription(workweekDTO.getDescription());
