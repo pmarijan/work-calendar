@@ -31,9 +31,6 @@ public class WorkCalendarService {
 	private CalendarRepository calendarRepository;
 
 	@Autowired
-	private HolidayRepository holidayRepository;
-
-	@Autowired
 	private WorkCalendarConverter workCalendarConverter;
 
 	@Autowired
@@ -73,6 +70,7 @@ public class WorkCalendarService {
 			throw new ResourceNotFoundException("workcalendar object does not exist!");
 		}
 
+		//interval should be inside workcalendar year
 		if(workCalendarEntity.getYear() != from.getYear()) {
 			LOG.error("workcalendar year={} and selected interval year={} do not match!", workCalendarEntity.getYear(), from.getYear());
 			throw new IllegalArgumentException("workcalendar year=" +workCalendarEntity.getYear()+" and selected interval year=" + from.getYear() + " do not match");

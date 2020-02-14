@@ -51,15 +51,15 @@ public class TestObjectFactory {
         workweekEntity.setId(Long.valueOf(id));
         workweekEntity.setDescription("Workweek description " + id);
         workweekEntity.setWeekNumber(id);
-        workweekEntity.setWorkCalendar(generateWorkCalendarEntity());
+        workweekEntity.setWorkCalendar(generateWorkCalendarEntity(1));
 
         return workweekEntity;
     }
-    public static List<HolidayEntity> generateHolidayEntityList(int numberOfHolidays) {
+    public static List<HolidayEntity> generateHolidayEntityList(int numberOfHolidays, boolean addWorkCalendar) {
         List<HolidayEntity> list = new ArrayList<>();
 
         for(int i = 1; i <= numberOfHolidays; i++) {
-            HolidayEntity holidayEntity = generateHolidayEntity(Long.valueOf(i));
+            HolidayEntity holidayEntity = generateHolidayEntity(Long.valueOf(i), addWorkCalendar);
 
             list.add(holidayEntity);
         }
@@ -67,25 +67,38 @@ public class TestObjectFactory {
         return list;
     }
 
-    public static HolidayEntity generateHolidayEntity(Long id) {
+    public static HolidayEntity generateHolidayEntity(Long id, boolean addWorkCalendar) {
         HolidayEntity holidayEntity = new HolidayEntity();
         holidayEntity.setId(id);
         holidayEntity.setWorkFree(true);
         holidayEntity.setName("Test holiday " + id);
         holidayEntity.setDate(LocalDate.of(2020, 2, 8));
-        holidayEntity.getWorkCalendars().add(generateWorkCalendarEntity());//setWorkCalendars(Stream.of(generateWorkCalendarEntity()).collect(Collectors.toCollection(HashSet::new)));
-
+        if(addWorkCalendar) {
+            holidayEntity.getWorkCalendars().add(generateWorkCalendarEntity(1));
+        }
         return holidayEntity;
     }
 
-    public static WorkCalendarEntity generateWorkCalendarEntity() {
+    public static WorkCalendarEntity generateWorkCalendarEntity(int id) {
         WorkCalendarEntity workCalendarEntity = new WorkCalendarEntity();
-        workCalendarEntity.setId(Long.valueOf(1));
+        workCalendarEntity.setId(Long.valueOf(id));
         workCalendarEntity.setDescription("Test work calendar");
         workCalendarEntity.setName("Calendar 1");
         workCalendarEntity.setYear(2020);
         workCalendarEntity.setWorkdays(new StringJoiner(",").add(DayOfWeek.MONDAY.name()).add(DayOfWeek.TUESDAY.name()).toString());
+        //we set false to prevent infinite loop
+        workCalendarEntity.getHolidays().addAll(generateHolidayEntityList(1, false));
 
         return workCalendarEntity;
+    }
+
+    public static List<WorkCalendarEntity> generateWorkCalendarEntityList(int numOfCalendars) {
+        List<WorkCalendarEntity> list = new ArrayList<>();
+
+        for(int i = 1; i <= numOfCalendars; i++) {
+            list.add(generateWorkCalendarEntity(i));
+        }
+
+        return list;
     }
 }
