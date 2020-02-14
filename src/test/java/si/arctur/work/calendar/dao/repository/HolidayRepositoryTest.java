@@ -9,8 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import si.arctur.work.calendar.dao.entity.HolidayEntity;
-import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
-import java.util.Collection;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -36,29 +34,4 @@ public class HolidayRepositoryTest {
 
         Assert.assertNull(holidayEntityResult);
     }
-
-//    @Test
-//    public void testworkdayOrHolidayCheckByWorkCalendars_getEmptyCollection() {
-//        Collection<HolidayEntity> holidays = holidayRepository.workdayOrHolidayCheckByWorkCalendars(Long.MAX_VALUE);
-//
-//        Assert.assertNotNull(holidays);
-//        Assert.assertTrue(holidays.isEmpty());
-//    }
-//
-//    @Test
-//    public void testworkdayOrHolidayCheckByWorkCalendars_getEmptyCollectionForNullInput() {
-//        Collection<HolidayEntity> holidays = holidayRepository.workdayOrHolidayCheckByWorkCalendars(null);
-//
-//        Assert.assertNotNull(holidays);
-//        Assert.assertTrue(holidays.isEmpty());
-//    }
-//
-//    @Test
-//    public void testworkdayOrHolidayCheckByWorkCalendars_getNotEmptyCollection() {
-//        Collection<HolidayEntity> holidays = holidayRepository.workdayOrHolidayCheckByWorkCalendars(Long.valueOf(1));
-//
-//        Assert.assertNotNull(holidays);
-//        Assert.assertFalse(holidays.isEmpty());
-//        Assert.assertTrue(holidays.size() == 20);
-//    }
 }

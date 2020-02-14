@@ -1,7 +1,6 @@
 package si.arctur.work.calendar.dao.repository;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
-
-import java.time.DayOfWeek;
-import java.util.StringJoiner;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -24,22 +20,6 @@ public class CalendarRepositoryTest {
 
     @Autowired
     private CalendarRepository calendarRepository;
-
-//    private WorkCalendarEntity workCalendarEntity;
-
-//    @Before
-//    public void setUp() {
-//        workCalendarEntity = new WorkCalendarEntity();
-//
-//        StringJoiner sj = new StringJoiner(",");
-//        sj.add(DayOfWeek.MONDAY.name()).add(DayOfWeek.TUESDAY.name()).add(DayOfWeek.WEDNESDAY.name()).add(DayOfWeek.THURSDAY.name()).add(DayOfWeek.FRIDAY.name());
-//        workCalendarEntity.setWorkdays(sj.toString());
-//        workCalendarEntity.setName("Test Work Calendar 2020");
-//        workCalendarEntity.setDescription("Some test description for Test Work Calendar 2020");
-//        workCalendarEntity.setYear(2020);
-//
-//        entityManager.persistAndFlush(workCalendarEntity);
-//    }
 
     @Test
     public void testGetWorkCalendarEntityById_getOne() {
