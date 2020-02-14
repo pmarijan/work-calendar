@@ -36,6 +36,4 @@ kubectl create -f work-calendar-app.yaml
 ### Swagger UI
 Swagger user interface is available at localhost:8080/swagger-ui.html
 
-### TODO
-* add missing unit tests
 
