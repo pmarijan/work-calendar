@@ -11,7 +11,6 @@ import si.arctur.work.calendar.converter.WorkCalendarConverter;
 import si.arctur.work.calendar.dao.entity.HolidayEntity;
 import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
 import si.arctur.work.calendar.dao.repository.CalendarRepository;
-import si.arctur.work.calendar.dao.repository.HolidayRepository;
 import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.DayDTO;
 import si.arctur.work.calendar.model.WorkCalendarDTO;
@@ -46,7 +45,7 @@ public class WorkCalendarService {
 		workCalendarEntity.setDescription(description);
 		workCalendarEntity.setName(name);
 		if(Objects.nonNull(workDays)) {
-			workCalendarEntity.setWorkdays(workDays.stream().map(d -> d.name()).collect(Collectors.joining(",")));
+			workCalendarEntity.setWorkdays(workDays.stream().map(Enum::name).collect(Collectors.joining(",")));
 		}
 		workCalendarEntity.setYear(year);
 
@@ -80,17 +79,17 @@ public class WorkCalendarService {
 		LOG.info("number of holidays for calendar={}", holidays.size());
 
         //convert collection to map for easier date search
-        Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(h -> h.getDate(), h -> h));
+        Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(HolidayEntity::getDate, h -> h));
 
 		//convert comma delimited string to set of workdays from work calendar
 		Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
 
         //function check if date is weekend or holiday
         Function<LocalDate, Boolean> isWorkday = (LocalDate date) -> {
-            Boolean result = false;
+            boolean result = false;
 
             //day is working day if it's not weekend and if it's not a workfree holiday
-            if(workdays.contains(date.getDayOfWeek())) {
+            if(Objects.nonNull(workdays) && workdays.contains(date.getDayOfWeek())) {
 
 				//check if it's holiday and if it's workfree holiday
             	result = !(holidaysMap.containsKey(date) && holidaysMap.get(date).getWorkFree());
@@ -100,7 +99,7 @@ public class WorkCalendarService {
         };
 
         long numOfWorkingDays = getDatesRange(from, to).stream()
-				.filter(d -> isWorkday.apply(d)).count();
+				.filter(isWorkday::apply).count();
 
         LOG.info("END - getWorkdayCount: {}", numOfWorkingDays);
         return numOfWorkingDays;
@@ -119,7 +118,7 @@ public class WorkCalendarService {
 		Set<HolidayEntity> holidays = workCalendarEntity.getHolidays();
 
 		//convert collection to map for easier date search
-		Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(h -> h.getDate(), h -> h));
+		Map<LocalDate, HolidayEntity> holidaysMap = holidays.stream().collect(Collectors.toMap(HolidayEntity::getDate, h -> h));
 
 		//convert comma delimited string of day names to set
 		Set<DayOfWeek> workdays = dayOfWeekEnumSetConverter.convert(workCalendarEntity.getWorkdays());
@@ -141,7 +140,7 @@ public class WorkCalendarService {
 		};
 
 		//iterate trough list of dates and check if weekend or holiday
-		List<DayDTO> days = getDatesRange(from, to).stream().map(l -> workdayOrHolidayCheck.apply(l)).collect(Collectors.toList());
+		List<DayDTO> days = getDatesRange(from, to).stream().map(workdayOrHolidayCheck::apply).collect(Collectors.toList());
 
 		LOG.info("END - getListOfDays: {}", days);
 		return days;

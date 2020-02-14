@@ -34,9 +34,9 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHolidays_getOne() {
-        Mockito.when(holidayRepository.getHolidayEntities(Long.valueOf(1), LocalDate.of(2020,2,8), null, null)).thenReturn(TestObjectFactory.generateHolidayEntityList(1, true));
+        Mockito.when(holidayRepository.getHolidayEntities(1L, LocalDate.of(2020,2,8), null, null)).thenReturn(TestObjectFactory.generateHolidayEntityList(1, true));
 
-        List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), null, null);
+        List<HolidayDTO> holidays = holidayService.getHolidays(1L, LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
         Assert.assertFalse(holidays.isEmpty());
         Assert.assertTrue(holidays.size() == 1);
@@ -44,9 +44,9 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHolidays_getTwo() {
-        Mockito.when(holidayRepository.getHolidayEntities(Long.valueOf(1), LocalDate.of(2020,2,8), null, null)).thenReturn(TestObjectFactory.generateHolidayEntityList(2, true));
+        Mockito.when(holidayRepository.getHolidayEntities(1L, LocalDate.of(2020,2,8), null, null)).thenReturn(TestObjectFactory.generateHolidayEntityList(2, true));
 
-        List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), null, null);
+        List<HolidayDTO> holidays = holidayService.getHolidays(1L, LocalDate.of(2020,2,8), null, null);
         Assert.assertNotNull(holidays);
         Assert.assertFalse(holidays.isEmpty());
         Assert.assertTrue(holidays.size() == 2);
@@ -56,7 +56,7 @@ public class HolidayServiceTest {
     public void testGetHolidays_getEmptyCollection() {
         Mockito.when(holidayRepository.findAll((Example<HolidayEntity>) Mockito.any())).thenReturn(new ArrayList<>());
 
-        List<HolidayDTO> holidays = holidayService.getHolidays(Long.valueOf(1), LocalDate.of(2020,2,8), "bla bla bla", true);
+        List<HolidayDTO> holidays = holidayService.getHolidays(1L, LocalDate.of(2020,2,8), "bla bla bla", true);
         Assert.assertNotNull(holidays);
         Assert.assertTrue(holidays.isEmpty());
     }
@@ -70,9 +70,9 @@ public class HolidayServiceTest {
 
     @Test
     public void testGetHoliday_getOne() {
-        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(TestObjectFactory.generateHolidayEntity(Long.valueOf(1), true));
+        Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(TestObjectFactory.generateHolidayEntity(1L, true));
 
-        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
+        HolidayDTO result = holidayService.getHoliday(1L, 1L);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(Long.valueOf(1), result.getId());
@@ -82,7 +82,7 @@ public class HolidayServiceTest {
     public void testGetHoliday_getNull() {
         Mockito.when(holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Mockito.anyLong(), Mockito.anyLong())).thenReturn(null);
 
-        HolidayDTO result = holidayService.getHoliday(Long.valueOf(1), Long.valueOf(1));
+        HolidayDTO result = holidayService.getHoliday(1L, 1L);
 
         Assert.assertNull(result);
     }
@@ -96,19 +96,19 @@ public class HolidayServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddHoliday_getExceptionForNullHolidayInput() {
-        holidayService.addHolidayToCalendar(Long.valueOf(1), null);
+        holidayService.addHolidayToCalendar(1L, null);
 
         Assert.fail("Exception should be thrown!");
     }
 
     @Test
     public void testAddHoliday_getOne() {
-        Mockito.when(holidayRepository.save(Mockito.any(HolidayEntity.class))).thenReturn(TestObjectFactory.generateHolidayEntity(Long.valueOf(1), true));
-        Mockito.when(holidayRepository.saveAndFlush(Mockito.any(HolidayEntity.class))).thenReturn(TestObjectFactory.generateHolidayEntity(Long.valueOf(1), true));
+        Mockito.when(holidayRepository.save(Mockito.any(HolidayEntity.class))).thenReturn(TestObjectFactory.generateHolidayEntity(1L, true));
+        Mockito.when(holidayRepository.saveAndFlush(Mockito.any(HolidayEntity.class))).thenReturn(TestObjectFactory.generateHolidayEntity(1L, true));
         Mockito.when(calendarRepository.save(Mockito.any(WorkCalendarEntity.class))).thenReturn(TestObjectFactory.generateWorkCalendarEntity(1));
         Mockito.when(calendarRepository.getWorkCalendarEntityById(Mockito.anyLong())).thenReturn(TestObjectFactory.generateWorkCalendarEntity(1));
 
-        HolidayDTO holidayDTO = holidayService.addHolidayToCalendar(Long.valueOf(1), TestObjectFactory.generateHolidayDTO(null));
+        HolidayDTO holidayDTO = holidayService.addHolidayToCalendar(1L, TestObjectFactory.generateHolidayDTO(null));
 
         Assert.assertNotNull(holidayDTO);
         Assert.assertEquals(Long.valueOf(1), holidayDTO.getId());

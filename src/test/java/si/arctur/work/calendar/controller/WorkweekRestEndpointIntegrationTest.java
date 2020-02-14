@@ -2,7 +2,6 @@ package si.arctur.work.calendar.controller;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class WorkweekRestEndpointIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
 
     @Before
     public void setUp() {
@@ -239,7 +238,7 @@ public class WorkweekRestEndpointIntegrationTest {
         WorkweekDTO workweekDTOBeforeUpdate = restTemplate.exchange("/workcalendar/1/workweek/1", HttpMethod.GET, null, new ParameterizedTypeReference<WorkweekDTO>() {}).getBody();
 
         WorkweekDTO workweekDTO = new WorkweekDTO();
-        workweekDTO.setId(Long.valueOf(1));
+        workweekDTO.setId(1L);
         workweekDTO.setDescription("My workweek X");
         workweekDTO.setWeekNumber(50);
 
@@ -259,7 +258,7 @@ public class WorkweekRestEndpointIntegrationTest {
     @Test
     public void testUpdateWorkweek_get500WorkweekIdMismatch() {
         WorkweekDTO workweekDTO = new WorkweekDTO();
-        workweekDTO.setId(Long.valueOf(564674));
+        workweekDTO.setId(564674L);
         workweekDTO.setDescription("My workweek X");
         workweekDTO.setWeekNumber(50);
 
@@ -274,7 +273,7 @@ public class WorkweekRestEndpointIntegrationTest {
     @Test
     public void testUpdateWorkweek_get404QueryByCalendarId() {
         WorkweekDTO workweekDTO = new WorkweekDTO();
-        workweekDTO.setId(Long.valueOf(1));
+        workweekDTO.setId(1L);
         workweekDTO.setDescription("My workweek X");
         workweekDTO.setWeekNumber(50);
 
@@ -314,7 +313,7 @@ public class WorkweekRestEndpointIntegrationTest {
     @Test
     public void testUpdateWorkweek_get400QueryByCalendarId() {
         WorkweekDTO workweekDTO = new WorkweekDTO();
-        workweekDTO.setId(Long.valueOf(1));
+        workweekDTO.setId(1L);
         workweekDTO.setDescription("My workweek X");
         workweekDTO.setWeekNumber(50);
 
@@ -329,7 +328,7 @@ public class WorkweekRestEndpointIntegrationTest {
     @Test
     public void testUpdateWorkweek_get400QueryByWorkweekId() {
         WorkweekDTO workweekDTO = new WorkweekDTO();
-        workweekDTO.setId(Long.valueOf(1));
+        workweekDTO.setId(1L);
         workweekDTO.setDescription("My workweek X");
         workweekDTO.setWeekNumber(50);
 

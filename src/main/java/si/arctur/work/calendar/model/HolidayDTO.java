@@ -1,7 +1,5 @@
 package si.arctur.work.calendar.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

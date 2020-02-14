@@ -142,8 +142,7 @@ public class HolidayService {
         LOG.info("numOfCalendarReferences={}", numOfCalendarReferences);
 
         if(!holidayEntity.getWorkCalendars().stream()
-                .filter(c -> c.getId().equals(calendarId))
-                .findAny().isPresent()) {
+                .anyMatch(c -> c.getId().equals(calendarId))) {
             throw new IllegalArgumentException("Workcalendar id mismatch!");
         }
 

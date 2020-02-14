@@ -28,7 +28,7 @@ public class TestObjectFactory {
 
     public static WorkCalendarDTO generateWorkCalendarDTO() {
         WorkCalendarDTO workCalendarDTO = new WorkCalendarDTO();
-        workCalendarDTO.setId(Long.valueOf(1));
+        workCalendarDTO.setId((long) 1);
         workCalendarDTO.setYear(2020);
         workCalendarDTO.setName("Test Calendar 1");
         workCalendarDTO.setDescription("Test working calendar 1 for year 2020");
@@ -59,7 +59,7 @@ public class TestObjectFactory {
         List<HolidayEntity> list = new ArrayList<>();
 
         for(int i = 1; i <= numberOfHolidays; i++) {
-            HolidayEntity holidayEntity = generateHolidayEntity(Long.valueOf(i), addWorkCalendar);
+            HolidayEntity holidayEntity = generateHolidayEntity((long) i, addWorkCalendar);
 
             list.add(holidayEntity);
         }
@@ -68,11 +68,15 @@ public class TestObjectFactory {
     }
 
     public static HolidayEntity generateHolidayEntity(Long id, boolean addWorkCalendar) {
+        return generateHolidayEntity(id, addWorkCalendar, LocalDate.of(2020, 2, 8));
+    }
+
+    public static HolidayEntity generateHolidayEntity(Long id, boolean addWorkCalendar, LocalDate date) {
         HolidayEntity holidayEntity = new HolidayEntity();
         holidayEntity.setId(id);
         holidayEntity.setWorkFree(true);
         holidayEntity.setName("Test holiday " + id);
-        holidayEntity.setDate(LocalDate.of(2020, 2, 8));
+        holidayEntity.setDate(date);
         if(addWorkCalendar) {
             holidayEntity.getWorkCalendars().add(generateWorkCalendarEntity(1));
         }
@@ -81,7 +85,7 @@ public class TestObjectFactory {
 
     public static WorkCalendarEntity generateWorkCalendarEntity(int id) {
         WorkCalendarEntity workCalendarEntity = new WorkCalendarEntity();
-        workCalendarEntity.setId(Long.valueOf(id));
+        workCalendarEntity.setId((long) id);
         workCalendarEntity.setDescription("Test work calendar");
         workCalendarEntity.setName("Calendar 1");
         workCalendarEntity.setYear(2020);

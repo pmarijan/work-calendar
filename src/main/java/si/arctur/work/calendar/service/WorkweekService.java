@@ -13,8 +13,6 @@ import si.arctur.work.calendar.dao.repository.WorkweekRepository;
 import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.WorkweekDTO;
 
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

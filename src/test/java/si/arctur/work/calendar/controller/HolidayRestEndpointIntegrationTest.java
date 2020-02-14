@@ -1,9 +1,7 @@
 package si.arctur.work.calendar.controller;
 
-import org.apache.tomcat.jni.Local;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,7 @@ public class HolidayRestEndpointIntegrationTest {
     @Autowired
     private HolidayRepository holidayRepository;
 
-    private HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
 
     @Before
     public void setUp() {

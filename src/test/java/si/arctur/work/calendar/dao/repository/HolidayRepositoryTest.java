@@ -22,7 +22,7 @@ public class HolidayRepositoryTest {
 
     @Test
     public void testGetHolidayEntityById_getOne() {
-        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Long.valueOf(1), Long.valueOf(1));
+        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(1L, 1L);
 
         Assert.assertNotNull(holidayEntityResult);
         Assert.assertEquals("Novo leto", holidayEntityResult.getName());
@@ -30,7 +30,7 @@ public class HolidayRepositoryTest {
 
     @Test
     public void testGetHolidayEntityById_getNull() {
-        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Long.MAX_VALUE, Long.valueOf(1));
+        HolidayEntity holidayEntityResult = holidayRepository.getHolidayEntityByIdAndWorkCalendarId(Long.MAX_VALUE, 1L);
 
         Assert.assertNull(holidayEntityResult);
     }

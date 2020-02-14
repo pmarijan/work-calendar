@@ -1,6 +1,7 @@
 package si.arctur.work.calendar.service;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -10,10 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Example;
 import org.springframework.test.context.junit4.SpringRunner;
 import si.arctur.work.calendar.TestObjectFactory;
-import si.arctur.work.calendar.dao.entity.WorkCalendarEntity;
 import si.arctur.work.calendar.dao.entity.WorkweekEntity;
 import si.arctur.work.calendar.dao.repository.CalendarRepository;
-import si.arctur.work.calendar.dao.repository.HolidayRepository;
 import si.arctur.work.calendar.dao.repository.WorkweekRepository;
 import si.arctur.work.calendar.exception.ResourceNotFoundException;
 import si.arctur.work.calendar.model.WorkweekDTO;
@@ -37,7 +36,7 @@ public class WorkweekServiceTest {
     public void testGetWorkweeksByCalendarId_getAll() {
         Mockito.when(workweekRepository.getWorkweekEntitiesByWorkCalendar(Mockito.any())).thenReturn(TestObjectFactory.generateWorkweekEntityList(20));
 
-        List<WorkweekDTO> workweekEntityList = workweekService.getWorkweeksByCalendarId(Long.valueOf(1));
+        List<WorkweekDTO> workweekEntityList = workweekService.getWorkweeksByCalendarId(1L);
 
         Assert.assertNotNull(workweekEntityList);
         Assert.assertTrue(workweekEntityList.size() == 20);
@@ -49,7 +48,7 @@ public class WorkweekServiceTest {
     public void testGetWorkweeksByCalendarId_getEmptyList() {
         Mockito.when(workweekRepository.getWorkweekEntitiesByWorkCalendar(Mockito.any())).thenReturn(Arrays.asList());
 
-        List<WorkweekDTO> workweekDTOList = workweekService.getWorkweeksByCalendarId(Long.valueOf(1));
+        List<WorkweekDTO> workweekDTOList = workweekService.getWorkweeksByCalendarId(1L);
 
         Assert.assertNotNull(workweekDTOList);
         Assert.assertTrue(workweekDTOList.isEmpty());
@@ -59,7 +58,7 @@ public class WorkweekServiceTest {
     public void testGetWorkweek_getOne() {
         Mockito.when(workweekRepository.getWorkweekEntityByIdAndWorkCalendar(Mockito.anyLong(), Mockito.any())).thenReturn(TestObjectFactory.generateWorkweekEntity(99));
 
-        WorkweekDTO workweekDTO = workweekService.getWorkweek(Long.valueOf(1), Long.valueOf(1));
+        WorkweekDTO workweekDTO = workweekService.getWorkweek(1L, 1L);
 
         Assert.assertNotNull(workweekDTO);
         Assert.assertEquals(Long.valueOf(99), workweekDTO.getId());
@@ -72,7 +71,7 @@ public class WorkweekServiceTest {
     public void testGetWorkweek_getNull() {
         Mockito.when(workweekRepository.getWorkweekEntityByIdAndWorkCalendar(Mockito.anyLong(), Mockito.any())).thenReturn(null);
 
-        WorkweekDTO workweekDTO = workweekService.getWorkweek(Long.valueOf(1), Long.valueOf(1));
+        WorkweekDTO workweekDTO = workweekService.getWorkweek(1L, 1L);
 
         Assert.assertNull(workweekDTO);
     }
@@ -81,7 +80,7 @@ public class WorkweekServiceTest {
     public void testGetWorkweeks_getAll() {
         Mockito.when(workweekRepository.findAll((Example<WorkweekEntity>) Mockito.any())).thenReturn(TestObjectFactory.generateWorkweekEntityList(10));
 
-        List<WorkweekDTO> workweekDTOList = workweekService.getWorkweeks(Long.valueOf(1), "desc 1", 1);
+        List<WorkweekDTO> workweekDTOList = workweekService.getWorkweeks(1L, "desc 1", 1);
 
         Assert.assertNotNull(workweekDTOList);
         Assert.assertTrue(workweekDTOList.size() == 10);
@@ -93,7 +92,7 @@ public class WorkweekServiceTest {
     public void testGetWorkweeks_getEmpty() {
         Mockito.when(workweekRepository.findAll((Example<WorkweekEntity>) Mockito.any())).thenReturn(Arrays.asList());
 
-        List<WorkweekDTO> workweekDTOList = workweekService.getWorkweeks(Long.valueOf(1), "desc 1", 1);
+        List<WorkweekDTO> workweekDTOList = workweekService.getWorkweeks(1L, "desc 1", 1);
 
         Assert.assertNotNull(workweekDTOList);
         Assert.assertTrue(workweekDTOList.isEmpty());
@@ -104,7 +103,7 @@ public class WorkweekServiceTest {
         Mockito.when(workweekRepository.save(Mockito.any())).thenReturn(TestObjectFactory.generateWorkweekEntity(5));
         Mockito.when(calendarRepository.getWorkCalendarEntityById(Mockito.anyLong())).thenReturn(TestObjectFactory.generateWorkCalendarEntity(1));
 
-        WorkweekDTO result = workweekService.addWorkweek(Long.valueOf(1), new WorkweekDTO());
+        WorkweekDTO result = workweekService.addWorkweek(1L, new WorkweekDTO());
 
         Assert.assertNotNull(result);
         Assert.assertNotNull(result.getWorkCalendar());
@@ -116,7 +115,7 @@ public class WorkweekServiceTest {
     public void testAddWorkweek_getResourceNotFoundException() {
         Mockito.when(calendarRepository.getWorkCalendarEntityById(Mockito.anyLong())).thenReturn(null);
 
-        workweekService.addWorkweek(Long.valueOf(1), new WorkweekDTO());
+        workweekService.addWorkweek(1L, new WorkweekDTO());
 
         Assert.fail("ResourceNotFoundException should be thrown");
     }
@@ -125,7 +124,7 @@ public class WorkweekServiceTest {
     public void testUpdateWorkweek_getResourceNotFoundException() {
         Mockito.when(workweekRepository.getWorkweekEntityByIdAndWorkCalendar(Mockito.anyLong(), Mockito.any())).thenReturn(null);
 
-        workweekService.updateWorkweek(Long.valueOf(999), new WorkweekDTO());
+        workweekService.updateWorkweek(999L, new WorkweekDTO());
 
         Assert.fail("ResourceNotFoundException should be thrown");
     }
@@ -136,8 +135,8 @@ public class WorkweekServiceTest {
         Mockito.when(workweekRepository.save(Mockito.any())).thenReturn(TestObjectFactory.generateWorkweekEntity(3));
 
         WorkweekDTO dto = new WorkweekDTO();
-        dto.setId(Long.valueOf(1));
-        WorkweekDTO updatedWorkweekDTO = workweekService.updateWorkweek(Long.valueOf(3), dto);
+        dto.setId(1L);
+        WorkweekDTO updatedWorkweekDTO = workweekService.updateWorkweek(3L, dto);
 
         Assert.assertNotNull(updatedWorkweekDTO);
         Assert.assertEquals(Long.valueOf(3), updatedWorkweekDTO.getId());
@@ -150,7 +149,7 @@ public class WorkweekServiceTest {
     public void testDeleteWorkweek_getResourceNotFoundForCalendarId() {
         Mockito.when(calendarRepository.getWorkCalendarEntityById(Mockito.anyLong())).thenReturn(null);
 
-        workweekService.deleteWorkweek(null, Long.valueOf(1));
+        workweekService.deleteWorkweek(null, 1L);
 
         Assert.fail("ResourceNotFoundException should be thrown");
     }
@@ -160,13 +159,13 @@ public class WorkweekServiceTest {
         Mockito.when(calendarRepository.getWorkCalendarEntityById(Mockito.anyLong())).thenReturn(TestObjectFactory.generateWorkCalendarEntity(1));
         Mockito.when(workweekRepository.getWorkweekEntityByIdAndWorkCalendar(Mockito.anyLong(), Mockito.any())).thenReturn(null);
 
-        workweekService.deleteWorkweek(Long.valueOf(1), null);
+        workweekService.deleteWorkweek(1L, null);
 
         Assert.fail("ResourceNotFoundException should be thrown");
     }
 
     @Test
+    @Ignore("currently there is no point for mocking and testing this method")
     public void testDeleteWorkweek_getSuccess() {
-        //currently there is no point for mocking and testing this method
     }
 }

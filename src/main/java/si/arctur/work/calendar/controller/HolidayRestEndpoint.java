@@ -107,7 +107,7 @@ public class HolidayRestEndpoint {
         LOG.info("START - updateHoliday(calendarId={}, holidayId={}, holidayDTO={})", calendarId, holidayId, holidayDTO);
 
         //check if ids match
-        if(Objects.nonNull(holidayDTO.getId()) && (holidayId != holidayDTO.getId())) {
+        if(Objects.nonNull(holidayDTO.getId()) && (!holidayId.equals(holidayDTO.getId()))) {
             LOG.error("Provided path holidayId={} and holidayDTO.holidayId={} do not match!", holidayId, holidayDTO.getId());
             throw new IllegalArgumentException("Provided path id and holidayDTO.id do not match!");
         }
