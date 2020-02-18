@@ -14,7 +14,7 @@ There are also SQL scripts for h2 or Mysql database initialization, which are ex
 
 ### Docker image
 Dockerfile is located in root of the project.
- * Dockerfile SCRIPT WAS NOT TESTED
+ * Dockerfile (SCRIPT WAS NOT TESTED)
  
 #### How to build docker image (from project root)
 docker build -t arctur/work-calendar .
@@ -28,7 +28,7 @@ docker stop <image_name>
 
 ### Kubernetes
 Yaml configuration script work-calendar-app.yaml is located in root of the project.
- * work-calendar-app.yaml SCRIPT WAS NOT TESTED
+ * work-calendar-app.yaml (SCRIPT WAS NOT TESTED)
 
 #### Run yaml script
 kubectl create -f work-calendar-app.yaml
